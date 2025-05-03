@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3 class="text-center">Meus Agendamentos</h3>
+
+<!-- Botão para criar novo agendamento -->
+<div class="text-center mb-4">
+    <a href="{% url 'pagina_agendamento' %}" class="btn btn-success">Criar Novo Agendamento</a>
+</div>
+
+<!-- Tabela de Agendamentos -->
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Data</th>
+            <th>CNPJ</th>
+            <th>Fornecedor</th>
+            <th>Email</th>
+            <th>Transportadora</th>
+            <th>Tipo de Carga</th>
+            <th>Pedido</th>
+            <th>Nota Fiscal</th>
+            <th>Produtos</th>
+            <th>Status</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ag in agendamentos %}
+        <tr>
+            <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
+            <td>{{ ag.cnpj }}</td>
+            <td>{{ ag.fornecedor }}</td>
+            <td>{{ ag.email }}</td>
+            <td>{{ ag.transportadora }}</td>
+            <td>{{ ag.tipo_carro }}</td>
+            <td>{{ ag.pedido }}</td>
+            <td>{{ ag.nota_fiscal }}</td>
+            <td>
+                {% if ag.itens.exists %}
+                    <!-- Botão para abrir o modal -->
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#produtosModal{{ ag.id }}">
+                        <i class="bi bi-eye"></i> Ver
+                    </button>
+
+                    <!-- Modal para visualização dos produtos e cubagem total -->
+                    <div class="modal fade" id="produtosModal{{ ag.id }}" tabindex="-1" aria-labelledby="produtosModalLabel{{ ag.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="produtosModalLabel{{ ag.id }}">Produtos do Agendamento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for item in ag.itens.all %}
+                                        <p><strong>{{ item.mercadoria }}</strong><br>
+                                        Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
+                                        Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
+                                        <hr>
+                                    {% endfor %}
+                                    <p class="fw-bold text-end text-success">
+                                        Cubagem Total: {{ ag.cubagem_total|floatformat:"-2" }}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <span class="text-muted">Nenhum produto</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if ag.status == 'pendente' %}
+                    <span class="badge bg-warning">Pendente</span>
+                {% elif ag.status == 'confirmado' %}
+                    <span class="badge bg-info">Confirmado</span>
+                {% elif ag.status == 'cancelado' %}
+                    <span class="badge bg-danger">Cancelado</span>
+                {% elif ag.status == 'finalizado' %}
+                    <span class="badge bg-success">Finalizado</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if ag.status == 'pendente' %}
+                    <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                {% else %}
+                    <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </a>                
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="11" class="text-center">Nenhum agendamento cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

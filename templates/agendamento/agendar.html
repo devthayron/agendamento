@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Agendamento{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Agendar Carro para Descarrego</h2>
+
+<div class="form-container shadow p-4 bg-light rounded">
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <hr>
+        <h4 class="mb-3">Produtos</h4>
+        <div id="produtos">
+            <div class="produto row align-items-end g-2 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nome do Produto</label>
+                    <input type="text" name="produtos[0][nome]" class="form-control" placeholder="Digite o nome do produto" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quantidade</label>
+                    <input type="number" name="produtos[0][quantidade]" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Cubagem</label>
+                    <input type="number" name="produtos[0][cubagem]" class="form-control" required>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="button" class="btn btn-success" onclick="adicionarProduto()">+ Adicionar Produto</button>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">Agendar</button>
+        </div>
+    </form>
+
+    <div class="text-center mt-4">
+        {% if user.is_gerente %}
+            <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info">Ver Todos os Agendamentos</a>
+        {% else %}
+            <a href="{% url 'meus_agendamentos' %}" class="btn btn-outline-info">Ver Meus Agendamentos</a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    let index = 1;
+
+    function adicionarProduto() {
+        const produtosDiv = document.getElementById('produtos');
+        const novoProduto = document.createElement('div');
+        novoProduto.classList.add('produto', 'row', 'align-items-end', 'g-2', 'mb-3');
+        novoProduto.innerHTML = `
+            <div class="col-md-4">
+                <label class="form-label">Nome do Produto</label>
+                <input type="text" name="produtos[${index}][nome]" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Quantidade</label>
+                <input type="number" name="produtos[${index}][quantidade]" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cubagem</label>
+                <input type="number" name="produtos[${index}][cubagem]" class="form-control" required>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+            </div>
+        `;
+        produtosDiv.appendChild(novoProduto);
+        index++;
+    }
+
+    function removerProduto(botao) {
+        botao.closest('.produto').remove();
+    }
+</script>
+
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}

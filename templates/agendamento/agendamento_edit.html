@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Editar Agendamento</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Exibe os campos do formulário de agendamento -->
+
+        <hr>
+        <h4 class="mb-3">Produtos</h4>
+        <div id="produtos">
+            {% for item in agendamento.itens.all %}
+            <div class="produto row align-items-end g-2 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nome do Produto</label>
+                    <input type="text" name="produtos[{{ forloop.counter0 }}][nome]" class="form-control" value="{{ item.mercadoria }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quantidade</label>
+                    <input type="number" name="produtos[{{ forloop.counter0 }}][quantidade]" class="form-control" value="{{ item.quantidade|floatformat:'-2' }}" step="any" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Cubagem</label>
+                    <input type="number" name="produtos[{{ forloop.counter0 }}][cubagem]" class="form-control" value="{{ item.cubagem|floatformat:'-2' }}" step="any" required>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-4">
+            <button type="button" class="btn btn-success" onclick="adicionarProduto()">+ Adicionar Produto</button>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">Salvar Alterações</button>
+        </div>
+    </form>
+
+    <br>
+    <a href="{% url 'meus_agendamentos' %}" class="btn btn-secondary">Voltar para a Lista</a>
+</div>
+
+<script>
+    let index = {{ agendamento.itens.count }}; // Começar de onde os itens já existem
+
+    function adicionarProduto() {
+        const produtosDiv = document.getElementById('produtos');
+        const novoProduto = document.createElement('div');
+        novoProduto.classList.add('produto', 'row', 'align-items-end', 'g-2', 'mb-3');
+        novoProduto.innerHTML = `
+            <div class="col-md-4">
+                <label class="form-label">Nome do Produto</label>
+                <input type="text" name="produtos[${index}][nome]" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Quantidade</label>
+                <input type="number" name="produtos[${index}][quantidade]" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cubagem</label>
+                <input type="number" name="produtos[${index}][cubagem]" class="form-control" required>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+            </div>
+        `;
+        produtosDiv.appendChild(novoProduto);
+        index++;
+    }
+
+    function removerProduto(botao) {
+        botao.closest('.produto').remove();
+    }
+</script>
+
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}

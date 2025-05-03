@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Dashboard do Gerente</h2>
+
+<!-- Filtro por datas -->
+<form method="get" class="row g-3 mt-3 mb-4">
+    <div class="col-auto">
+        <label for="data_inicio" class="form-label">De:</label>
+        <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}" class="form-control">
+    </div>
+    <div class="col-auto">
+        <label for="data_fim" class="form-label">Até:</label>
+        <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}" class="form-control">
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="{% url 'exportar_agendamentos_csv' %}?data_inicial={{ data_inicial }}&data_final={{ data_final }}" class="btn btn-outline-primary mb-3">Exportar CSV</a>
+        <a href="{% url 'dashboard_gerente' %}" class="btn btn-secondary">Limpar</a>
+    </div>
+</form>
+
+<!-- Cards de estatísticas -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total de Agendamentos</h5>
+                <p class="card-text">{{ total }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Pendentes</h5>
+                <p class="card-text">{{ pendentes }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Confirmados</h5>
+                <p class="card-text">{{ confirmados }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Cancelados</h5>
+                <p class="card-text">{{ cancelados }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Agendamentos de Hoje -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card text-bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Agendamentos Hoje</h5>
+                <p class="card-text">{{ agendamentos_hoje }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico + Finalizados -->
+<div class="row mt-5">
+    <div class="col-md-6">
+        <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Distribuição de Agendamentos</h5>
+                <canvas id="graficoStatus" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card text-bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Finalizados</h5>
+                <p class="card-text">{{ finalizados }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('graficoStatus').getContext('2d');
+    const graficoStatus = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Pendentes', 'Confirmados', 'Cancelados', 'Finalizados'],
+            datasets: [{
+                label: 'Status dos Agendamentos',
+                data: [
+                    {{ pendentes|default:0|safe }},
+                    {{ confirmados|default:0|safe }},
+                    {{ cancelados|default:0|safe }},
+                    {{ finalizados|default:0|safe }}
+                ],
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(220, 53, 69, 0.7)',
+                    'rgba(0, 123, 255, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(0, 123, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+            }
+        }
+    });
+</script>
+
+
+{% endblock %}

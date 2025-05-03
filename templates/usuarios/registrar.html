@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<h4>Adicionar Novo Usuário</h4>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}  
+    <button class="btn btn-success" type="submit">Cadastrar</button>
+    <a href="{% url 'listar_usuarios' %}" class="btn btn-primary">Listar Usuários</a>
+</form>
+
+<!-- Botão para listar usuários -->
+
+
+{% endblock %}

@@ -1,0 +1,78 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import RegistroUsuarioForm
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+def registrar_usuario(request):
+    if request.method == 'POST':
+        form = RegistroUsuarioForm(request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            login(request, usuario)
+            return redirect('pagina_agendamento')
+    else:
+        form = RegistroUsuarioForm()
+    return render(request, 'usuarios/registrar.html', {'form': form})
+
+def login_usuario(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            usuario = form.get_user()
+            login(request, usuario)
+            return redirect('pagina_agendamento')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'usuarios/login.html', {'form': form})
+
+def logout_usuario(request):
+    logout(request)
+    return redirect('login')
+
+User = get_user_model()
+
+@login_required
+@user_passes_test(lambda u: u.is_gerente)
+def listar_usuarios(request):
+    usuarios = User.objects.all()
+
+    if request.method == 'POST':
+        form = RegistroUsuarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_usuarios')
+    else:
+        form = RegistroUsuarioForm()
+
+    return render(request, 'usuarios/gerenciar_usuarios.html', {
+        'form': form,
+        'usuarios': usuarios
+    })
+
+@login_required
+@user_passes_test(lambda u: u.is_gerente)
+def excluir_usuario(request, usuario_id):
+    if request.user.id != usuario_id:  # impede deletar a si mesmo
+        usuario = User.objects.get(id=usuario_id)
+        usuario.delete()
+    return redirect('listar_usuarios')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        senha = request.POST['senha']
+        user = authenticate(request, username=username, password=senha)
+        if user is not None:
+            login(request, user)
+            return redirect('pagina_agendamento')
+        else:
+            erro = "Usuário ou senha inválidos."
+            return render(request, 'usuarios/login.html', {'erro': erro})
+    return render(request, 'usuarios/login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')

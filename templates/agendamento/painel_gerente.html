@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Painel Administrativo{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Painel Administrativo</h2>
+
+<!-- Filtros -->
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-2">
+        <input type="date" name="data_inicial" class="form-control" value="{{ data_inicial }}">
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="data_final" class="form-control" value="{{ data_final }}">
+    </div>
+    <div class="col-md-2">
+        <input type="text" name="cnpj" class="form-control" placeholder="CNPJ" value="{{ cnpj }}">
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="fornecedor" class="form-control" placeholder="Fornecedor" value="{{ fornecedor }}">
+    </div>
+    <div class="col-md-2">
+        <input type="text" name="mercadoria" class="form-control" placeholder="Tipo de Carga" value="{{ mercadoria }}">
+    </div>
+    <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+</form>
+
+<!-- Tabela -->
+<div class="table-responsive row g-5 mb-4">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Data</th>
+                <th>Usuario</th>
+                <th>CNPJ</th>
+                <th>Fornecedor</th>
+                <th>Email</th>
+                <th>Transportadora</th>
+                <th>Tipo</th>
+                <th>Pedido</th>
+                <th>NF</th>
+                <th>Produtos</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ag in page_obj %}
+                <tr>
+                    <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
+                    <td>{{ ag.usuario }}</td>
+                    <td>{{ ag.cnpj }}</td>
+                    <td>{{ ag.fornecedor }}</td>
+                    <td>{{ ag.email }}</td>
+                    <td>{{ ag.transportadora }}</td>
+                    <td>{{ ag.tipo_carro }}</td>
+                    <td>{{ ag.pedido }}</td>
+                    <td>{{ ag.nota_fiscal }}</td>
+                    <td class="text-center">
+                        {% if ag.itens.exists %}
+                            <!-- Botão que abre o modal -->
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#produtosModal{{ ag.id }}">
+                                <i class="bi bi-eye"></i> Ver
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="produtosModal{{ ag.id }}" tabindex="-1" aria-labelledby="produtosModalLabel{{ ag.id }}" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title text-center w-100" id="produtosModalLabel{{ ag.id }}">Produtos do Agendamento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    {% for item in ag.itens.all %}
+                                        <p><strong>{{ item.mercadoria }}</strong><br>
+                                        Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
+                                        Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
+                                        <hr>
+                                    {% endfor %}
+                                
+                                    <p class="fw-bold text-end text-success">
+                                        Cubagem Total: {{ ag.cubagem_total|floatformat:"-2" }}
+                                    </p>
+                                </div>                                
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        {% else %}
+                            <span class="text-muted">Nenhum produto</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ag.status == 'pendente' %}
+                            <span class="badge bg-warning">Pendente</span>
+                        {% elif ag.status == 'confirmado' %}
+                            <span class="badge bg-info">Confirmado</span>
+                        {% elif ag.status == 'cancelado' %}
+                            <span class="badge bg-danger">Cancelado</span>
+                        {% elif ag.status == 'finalizado' %}
+                            <span class="badge bg-success">Finalizado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ag.status == 'pendente' %}
+                            <a href="{% url 'confirmar_agendamento' ag.id %}" class="btn btn-success btn-sm">Confirmar</a>
+                            <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm">Cancelar</a>
+                        {% elif ag.status == 'confirmado' %}
+                            <a href="{% url 'finalizar_agendamento' ag.id %}" class="btn btn-primary btn-sm">Finalizar</a>
+                            <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm ">Cancelar</a>
+                        {% else %}
+                            <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>                        
+                            {% comment %} <span class="text-muted">---</span> {% endcomment %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="12" class="text-center">Nenhum agendamento encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'agendamento/paginacao.html' %}
+{% endblock %}

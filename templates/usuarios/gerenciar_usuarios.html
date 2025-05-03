@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Gerenciar Usuários{% endblock %}
+
+{% block content %}
+
+<h4 class="container">Lista de Usuários</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Usuário</th>
+            <th>Email</th>
+            <th>Nível</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td>{% if u.is_gerente %}Gerente{% else %}Usuário{% endif %}</td>
+                <td>
+                    {% if request.user.id != u.id %}
+                        <a class="btn btn-danger btn-sm" href="{% url 'excluir_usuario' u.id %}">Excluir</a>
+                    {% else %}
+                        <small>(você)</small>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="d-flex justify-content-end">
+    <a href="{% url 'registrar' %}" class="btn btn-success mt-3 btn-sm">+ Adicionar Usuários</a>
+</div>
+
+{% endblock %}
