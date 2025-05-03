@@ -32,14 +32,12 @@
         <thead class="table-dark">
             <tr>
                 <th>Data</th>
-                <th>Usuario</th>
-                <th>CNPJ</th>
                 <th>Fornecedor</th>
-                <th>Email</th>
                 <th>Transportadora</th>
                 <th>Tipo</th>
                 <th>Pedido</th>
                 <th>NF</th>
+                <th>M³</th>
                 <th>Produtos</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -49,14 +47,12 @@
             {% for ag in page_obj %}
                 <tr>
                     <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
-                    <td>{{ ag.usuario }}</td>
-                    <td>{{ ag.cnpj }}</td>
                     <td>{{ ag.fornecedor }}</td>
-                    <td>{{ ag.email }}</td>
                     <td>{{ ag.transportadora }}</td>
                     <td>{{ ag.tipo_carro }}</td>
                     <td>{{ ag.pedido }}</td>
                     <td>{{ ag.nota_fiscal }}</td>
+                    <td>{{ ag.cubagem_total|floatformat:"-2" }}</td>
                     <td class="text-center">
                         {% if ag.itens.exists %}
                             <!-- Botão que abre o modal -->
@@ -75,6 +71,7 @@
                                   <div class="modal-body">
                                     {% for item in ag.itens.all %}
                                         <p><strong>{{ item.mercadoria }}</strong><br>
+                                        NF: {{ item.nota_fiscal|floatformat:"-2" }}<br>
                                         Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
                                         Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
                                         <hr>
@@ -108,11 +105,12 @@
                     </td>
                     <td>
                         {% if ag.status == 'pendente' %}
+                            <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
                             <a href="{% url 'confirmar_agendamento' ag.id %}" class="btn btn-success btn-sm">Confirmar</a>
-                            <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm">Cancelar</a>
+                            <!-- <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm">Cancelar</a> -->
                         {% elif ag.status == 'confirmado' %}
+                            <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
                             <a href="{% url 'finalizar_agendamento' ag.id %}" class="btn btn-primary btn-sm">Finalizar</a>
-                            <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm ">Cancelar</a>
                         {% else %}
                             <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
                                 <i class="bi bi-file-earmark-pdf"></i> PDF

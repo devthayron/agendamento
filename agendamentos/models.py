@@ -41,6 +41,7 @@ class AgendamentoProduto(models.Model):
         on_delete=models.CASCADE,
         related_name='itens'
     )
+    nota_fiscal = models.FloatField("Nota fiscal",default=1)
     mercadoria = models.CharField("Produto", max_length=100)
     quantidade = models.FloatField("Quantidade")
     cubagem = models.FloatField("Cubagem")

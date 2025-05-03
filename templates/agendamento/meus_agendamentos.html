@@ -13,9 +13,7 @@
     <thead class="thead-dark">
         <tr>
             <th>Data</th>
-            <th>CNPJ</th>
             <th>Fornecedor</th>
-            <th>Email</th>
             <th>Transportadora</th>
             <th>Tipo de Carga</th>
             <th>Pedido</th>
@@ -29,9 +27,7 @@
         {% for ag in agendamentos %}
         <tr>
             <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
-            <td>{{ ag.cnpj }}</td>
             <td>{{ ag.fornecedor }}</td>
-            <td>{{ ag.email }}</td>
             <td>{{ ag.transportadora }}</td>
             <td>{{ ag.tipo_carro }}</td>
             <td>{{ ag.pedido }}</td>
