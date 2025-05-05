@@ -5,7 +5,7 @@
 
 <!-- Botão para criar novo agendamento -->
 <div class="text-center mb-4">
-    <a href="{% url 'pagina_agendamento' %}" class="btn btn-success">Criar Novo Agendamento</a>
+    <a href="{% url 'agendamento_criar' %}" class="btn btn-success">Criar Novo Agendamento</a>
 </div>
 
 <!-- Tabela de Agendamentos -->
@@ -24,7 +24,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for ag in agendamentos %}
+        {% for ag in page_obj %}
         <tr>
             <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
             <td>{{ ag.fornecedor }}</td>
@@ -81,7 +81,7 @@
             </td>
             <td>
                 {% if ag.status == 'pendente' %}
-                    <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
                 {% else %}
                     <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
                         <i class="bi bi-file-earmark-pdf"></i> PDF
@@ -96,5 +96,6 @@
         {% endfor %}
     </tbody>
 </table>
+{% include 'paginacao.html' %}
 
 {% endblock %}

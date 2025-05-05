@@ -11,7 +11,7 @@ def registrar_usuario(request):
         if form.is_valid():
             usuario = form.save()
             login(request, usuario)
-            return redirect('pagina_agendamento')
+            return redirect('agendamento_criar')
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registrar.html', {'form': form})
@@ -22,7 +22,7 @@ def login_usuario(request):
         if form.is_valid():
             usuario = form.get_user()
             login(request, usuario)
-            return redirect('pagina_agendamento')
+            return redirect('agendamento_criar')
     else:
         form = AuthenticationForm()
     return render(request, 'usuarios/login.html', {'form': form})
@@ -66,7 +66,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=senha)
         if user is not None:
             login(request, user)
-            return redirect('pagina_agendamento')
+            return redirect('agendamento_criar')
         else:
             erro = "Usuário ou senha inválidos."
             return render(request, 'usuarios/login.html', {'erro': erro})

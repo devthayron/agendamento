@@ -34,7 +34,10 @@ class Agendamento(models.Model):
     def cubagem_total(self):
         return self.itens.aggregate(total=Sum('cubagem'))['total'] or 0
     
+    def quantidade_total(self):
+        return self.itens.aggregate(total=Sum('quantidade'))['total'] or 0
 
+    
 class AgendamentoProduto(models.Model):
     agendamento = models.ForeignKey(
         'Agendamento',

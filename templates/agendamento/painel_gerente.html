@@ -37,7 +37,8 @@
                 <th>Tipo</th>
                 <th>Pedido</th>
                 <th>NF</th>
-                <th>M³</th>
+                <th>Cubagem</th>
+                <th>Qtd</th>
                 <th>Produtos</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -52,7 +53,8 @@
                     <td>{{ ag.tipo_carro }}</td>
                     <td>{{ ag.pedido }}</td>
                     <td>{{ ag.nota_fiscal }}</td>
-                    <td>{{ ag.cubagem_total|floatformat:"-2" }}</td>
+                    <td>{{ ag.cubagem_total|floatformat:"-2" }}m³</td>
+                    <td>{{ ag.quantidade_total|floatformat:"-2" }}</td>
                     <td class="text-center">
                         {% if ag.itens.exists %}
                             <!-- Botão que abre o modal -->
@@ -105,11 +107,11 @@
                     </td>
                     <td>
                         {% if ag.status == 'pendente' %}
-                            <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                            <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-secondary btn-sm">Editar</a>
                             <a href="{% url 'confirmar_agendamento' ag.id %}" class="btn btn-success btn-sm">Confirmar</a>
                             <!-- <a href="{% url 'cancelar_agendamento' ag.id %}" class="btn btn-danger btn-sm">Cancelar</a> -->
                         {% elif ag.status == 'confirmado' %}
-                            <a href="{% url 'editar_agendamento' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                            <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-secondary btn-sm">Editar</a>
                             <a href="{% url 'finalizar_agendamento' ag.id %}" class="btn btn-primary btn-sm">Finalizar</a>
                         {% else %}
                             <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
@@ -128,5 +130,5 @@
     </table>
 </div>
 
-{% include 'agendamento/paginacao.html' %}
+{% include 'paginacao.html' %}
 {% endblock %}

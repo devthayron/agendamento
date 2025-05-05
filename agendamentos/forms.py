@@ -13,12 +13,12 @@ class AgendamentoForm(forms.ModelForm):
             'data_hora': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'cnpj': forms.TextInput(attrs={'class': 'form-control'}),
             'fornecedor': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@gmail.com'}),  # Estilo para o campo de email
-            'transportadora': forms.TextInput(attrs={'class': 'form-control'}),  # Estilo para transportadora
-            'tipo_carro': forms.TextInput(attrs={'class': 'form-control'}),  # Estilo para tipo de carro
-            'pedido': forms.TextInput(attrs={'class': 'form-control'}),  # Estilo para pedido
-            'nota_fiscal': forms.TextInput(attrs={'class': 'form-control'}),  # Estilo para nota fiscal
-            'produto': forms.TextInput(attrs={'class': 'form-control'}),  # Estilo para produto
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@gmail.com'}), 
+            'transportadora': forms.TextInput(attrs={'class': 'form-control'}),  
+            'tipo_carro': forms.TextInput(attrs={'class': 'form-control'}),  
+            'pedido': forms.TextInput(attrs={'class': 'form-control'}),  
+            'nota_fiscal': forms.TextInput(attrs={'class': 'form-control'}),  
+            'produto': forms.TextInput(attrs={'class': 'form-control'}),  
         }
 
     def __init__(self, *args, **kwargs):

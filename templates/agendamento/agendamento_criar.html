@@ -21,11 +21,11 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Quantidade</label>
-                    <input type="number" name="produtos[0][quantidade]" class="form-control" required>
+                    <input type="number" name="produtos[0][quantidade]" class="form-control" step="any" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Cubagem</label>
-                    <input type="number" name="produtos[0][cubagem]" class="form-control" required>
+                    <input type="number" name="produtos[0][cubagem]" class="form-control" step="any" required>
                 </div>
                 <div class="col-md-2 text-end">
                     <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
@@ -46,7 +46,7 @@
         {% if user.is_gerente %}
             <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info">Ver Todos os Agendamentos</a>
         {% else %}
-            <a href="{% url 'meus_agendamentos' %}" class="btn btn-outline-info">Ver Meus Agendamentos</a>
+            <a href="{% url 'painel_user' %}" class="btn btn-outline-info">Ver Meus Agendamentos</a>
         {% endif %}
     </div>
 </div>
@@ -65,11 +65,11 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">Quantidade</label>
-                <input type="number" name="produtos[${index}][quantidade]" class="form-control" required>
+                <input type="number" name="produtos[${index}][quantidade]" class="form-control" step="any" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Cubagem</label>
-                <input type="number" name="produtos[${index}][cubagem]" class="form-control" required>
+                <input type="number" name="produtos[${index}][cubagem]" class="form-control" step="any" required>
             </div>
             <div class="col-md-2 text-end">
                 <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>

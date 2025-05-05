@@ -16,9 +16,9 @@
         <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}" class="form-control">
     </div>
     <div class="col-auto align-self-end">
-        <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a href="{% url 'exportar_agendamentos_csv' %}?data_inicial={{ data_inicial }}&data_final={{ data_final }}" class="btn btn-outline-primary mb-3">Exportar CSV</a>
-        <a href="{% url 'dashboard_gerente' %}" class="btn btn-secondary">Limpar</a>
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+        <a href="{% url 'exportar_agendamentos_csv' %}?data_inicial={{ data_inicial }}&data_final={{ data_final }}" class="btn btn-outline-primary">Exportar CSV</a>
+        <a href="{% url 'painel_dashboard' %}" class="btn btn-secondary">Limpar</a>
     </div>
 </form>
 
