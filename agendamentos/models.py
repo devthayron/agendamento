@@ -11,7 +11,25 @@ class Agendamento(models.Model):
     transportadora = models.CharField(max_length=100)
     nota_fiscal = models.IntegerField()
     pedido = models.CharField(max_length=100)
-    tipo_carro = models.CharField(max_length=50)
+    # tipo_carro = models.CharField(max_length=50)
+
+    GALPAO_CHOICES = [
+        ('galpao1', 'galpão1'),
+        ('galpao2', 'galpão2'),
+        ('galpao3', 'galpão3'),
+        ('galpãa4', 'galpão4'),
+    ]
+
+    galpao = models.CharField("Galpão", max_length=20,choices=GALPAO_CHOICES,)
+
+    TIPO_CARRO_CHOICES = [
+        ('vuc', 'VUC'),
+        ('toco', 'Toco'),
+        ('truck', 'Truck'),
+        ('carreta', 'Carreta'),
+    ]
+
+    tipo_carro = models.CharField("Tipo", max_length=20,choices=TIPO_CARRO_CHOICES,)
 
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),

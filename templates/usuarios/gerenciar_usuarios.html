@@ -11,6 +11,7 @@
             <th>Usuário</th>
             <th>Email</th>
             <th>Nível</th>
+            <th>Ativo</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -20,9 +21,27 @@
                 <td>{{ u.username }}</td>
                 <td>{{ u.email }}</td>
                 <td>{% if u.is_gerente %}Gerente{% else %}Usuário{% endif %}</td>
+                <td class="text-center">
+                    {% if u.is_active %}
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                    {% else %}
+                        <i class="bi bi-x-circle-fill text-danger"></i>
+                    {% endif %}
+                </td>
                 <td>
                     {% if request.user.id != u.id %}
-                        <a class="btn btn-danger btn-sm" href="{% url 'excluir_usuario' u.id %}">Excluir</a>
+                        {% if u.is_active %}
+                            <a class="btn btn-warning btn-sm me-1" href="{% url 'desativar_usuario' u.id %}">
+                                <i class="bi bi-lock-fill"></i> Desativar
+                            </a>
+                        {% else %}
+                            <a class="btn btn-success btn-sm me-1" href="{% url 'reativar_usuario' u.id %}">
+                                <i class="bi bi-unlock-fill"></i> Reativar
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-danger btn-sm" href="{% url 'excluir_usuario' u.id %}">
+                            <i class="bi bi-trash-fill"></i> Excluir
+                        </a>
                     {% else %}
                         <small>(você)</small>
                     {% endif %}

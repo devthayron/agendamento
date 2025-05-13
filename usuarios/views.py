@@ -4,6 +4,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.models import User
+
+# verifica se o usuário está logado e se é 'gerente'
+def is_gerente(user):
+    return user.is_authenticated and user.is_gerente
 
 def registrar_usuario(request):
     if request.method == 'POST':
@@ -15,6 +22,28 @@ def registrar_usuario(request):
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registrar.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_gerente)
+def desativar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.user.id != user.id:
+        user.is_active = False
+        user.save()
+        messages.success(request, 'Usuário desativado com sucesso.')
+    else:
+        messages.warning(request, 'Você não pode desativar seu próprio usuário.')
+    return redirect('listar_usuarios')
+
+@login_required
+@user_passes_test(is_gerente)
+def reativar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = True
+    user.save()
+    messages.success(request, 'Usuário reativado com sucesso.')
+    return redirect('listar_usuarios')
 
 def login_usuario(request):
     if request.method == 'POST':

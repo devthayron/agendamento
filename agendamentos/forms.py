@@ -6,7 +6,7 @@ class AgendamentoForm(forms.ModelForm):
     class Meta:
         model = Agendamento
         fields = [
-            'cnpj', 'fornecedor', 'email', 'transportadora', 'tipo_carro', 
+            'galpao','cnpj', 'fornecedor', 'email', 'transportadora', 'tipo_carro', 
             'pedido', 'nota_fiscal', 'data_hora',
         ]
         widgets = {
@@ -15,10 +15,11 @@ class AgendamentoForm(forms.ModelForm):
             'fornecedor': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@gmail.com'}), 
             'transportadora': forms.TextInput(attrs={'class': 'form-control'}),  
-            'tipo_carro': forms.TextInput(attrs={'class': 'form-control'}),  
+            'tipo_carro': forms.Select(attrs={'class': 'form-control'}),  
             'pedido': forms.TextInput(attrs={'class': 'form-control'}),  
             'nota_fiscal': forms.TextInput(attrs={'class': 'form-control'}),  
             'produto': forms.TextInput(attrs={'class': 'form-control'}),  
+            'galpao': forms.Select(attrs={'class': 'form-control'}),  
         }
 
     def __init__(self, *args, **kwargs):

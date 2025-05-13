@@ -141,8 +141,7 @@ def agendamento_editar(request, id):
 def painel_gerente(request):
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
-    cnpj = request.GET.get('cnpj')
-    fornecedor = request.GET.get('fornecedor')
+    status = request.GET.get('status')
     mercadoria = request.GET.get('mercadoria')
 
     agendamentos = Agendamento.objects.all()
@@ -161,13 +160,12 @@ def painel_gerente(request):
         except ValueError:
             pass
 
-    if cnpj:
-        agendamentos = agendamentos.filter(cnpj__icontains=cnpj)
-    if fornecedor:
-        agendamentos = agendamentos.filter(fornecedor__icontains=fornecedor)
+
+    if status:
+        agendamentos = agendamentos.filter(status=status)
+
     if mercadoria:
         agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
-
 
     agendamentos = agendamentos.order_by('-data_hora')
     paginator = Paginator(agendamentos, 10)
@@ -178,8 +176,9 @@ def painel_gerente(request):
         'page_obj': page_obj,
         'data_inicial': data_inicial,
         'data_final': data_final,
-        'cnpj': cnpj,
-        'fornecedor': fornecedor,
+        'mercadoria': mercadoria,
+        'status':status,
+        'status_choices':Agendamento.STATUS_CHOICES,
         'mercadoria': mercadoria,
     }
 

@@ -7,20 +7,20 @@
 <!-- Filtros -->
 <form method="get" class="row g-3 mb-4">
     <div class="col-md-2">
-        <input type="date" name="data_inicial" class="form-control" value="{{ data_inicial }}">
+        <input type="date" name="data_inicial" class="form-control" value="{{ data_inicial|default:"" }}">
     </div>
     <div class="col-md-2">
-        <input type="date" name="data_final" class="form-control" value="{{ data_final }}">
+        <input type="date" name="data_final" class="form-control" value="{{ data_final|default:"" }}">
     </div>
     <div class="col-md-2">
-        <input type="text" name="cnpj" class="form-control" placeholder="CNPJ" value="{{ cnpj }}">
+        <select name="status" class="form-control">
+            <option value="" {% if not status %}selected{% endif %}>Todos os status</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
     </div>
-    <div class="col-md-3">
-        <input type="text" name="fornecedor" class="form-control" placeholder="Fornecedor" value="{{ fornecedor }}">
-    </div>
-    <div class="col-md-2">
-        <input type="text" name="mercadoria" class="form-control" placeholder="Tipo de Carga" value="{{ mercadoria }}">
-    </div>
+
     <div class="col-md-1 d-grid">
         <button type="submit" class="btn btn-primary">Filtrar</button>
     </div>
