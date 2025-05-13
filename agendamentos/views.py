@@ -9,6 +9,7 @@ from django.utils import timezone
 from weasyprint import HTML
 from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
+from .utils import verificar_disponibilidade
 
 # verifica se o usuário está logado e se é 'gerente'
 def is_gerente(user):
@@ -50,42 +51,66 @@ def painel_users_list(request):
 # ------------------ Criar Agendamento ------------------
 @login_required
 def agendamento_criar(request):
+    mensagem_erro = None
+    sugestoes = None
+
     if request.method == 'POST':
         form = AgendamentoForm(request.POST)
         if form.is_valid():
-            agendamento = form.save(commit=False)
-            agendamento.usuario = request.user
-            agendamento.save()
+            galpao = form.cleaned_data['galpao']
+            data_hora = form.cleaned_data['data_hora']
 
-            produtos = []
-            i = 0
-            while True:
-                nome = request.POST.get(f'produtos[{i}][nome]')
-                quantidade = request.POST.get(f'produtos[{i}][quantidade]')
-                cubagem = request.POST.get(f'produtos[{i}][cubagem]')
-                if not nome:
-                    break
-                try:
-                    quantidade = float(quantidade)
-                    cubagem = float(cubagem)
-                except ValueError:
-                    quantidade = 0.0
-                    cubagem = 0.0
-                produtos.append((nome, quantidade, cubagem))
-                i += 1
+            # Verificação de disponibilidade antes de salvar
+            disponivel, resultado = verificar_disponibilidade(galpao, data_hora.date())
 
-            for nome, quantidade, cubagem in produtos:
-                AgendamentoProduto.objects.create(
-                    agendamento=agendamento,
-                    mercadoria=nome,
-                    quantidade=quantidade,
-                    cubagem=cubagem
-                )
-            return redirect('agendamento_criar')
+            if not disponivel:
+                mensagem_erro = resultado['mensagem']
+                sugestoes = {
+                    'anterior': resultado['anterior'],
+                    'posterior': resultado['posterior'],
+                }
+            else:
+                agendamento = form.save(commit=False)
+                agendamento.usuario = request.user
+                agendamento.save()
+
+                produtos = []
+                i = 0
+                while True:
+                    nome = request.POST.get(f'produtos[{i}][nome]')
+                    quantidade = request.POST.get(f'produtos[{i}][quantidade]')
+                    cubagem = request.POST.get(f'produtos[{i}][cubagem]')
+                    if not nome:
+                        break
+                    try:
+                        quantidade = float(quantidade)
+                        cubagem = float(cubagem)
+                    except ValueError:
+                        quantidade = 0.0
+                        cubagem = 0.0
+                    produtos.append((nome, quantidade, cubagem))
+                    i += 1
+
+                for nome, quantidade, cubagem in produtos:
+                    AgendamentoProduto.objects.create(
+                        agendamento=agendamento,
+                        mercadoria=nome,
+                        quantidade=quantidade,
+                        cubagem=cubagem
+                    )
+                return redirect('agendamento_criar')
     else:
         form = AgendamentoForm()
 
-    return render(request, 'agendamento/agendamento_criar.html', {'form': form})
+    return render(
+        request,
+        'agendamento/agendamento_criar.html',
+        {
+            'form': form,
+            'mensagem_erro': mensagem_erro,
+            'sugestoes': sugestoes
+        }
+    )
 
 
 # ------------------ Editar Agendamento ------------------
@@ -93,46 +118,72 @@ def agendamento_criar(request):
 def agendamento_editar(request, id):
     agendamento = get_object_or_404(Agendamento, id=id)
 
+    mensagem_erro = None
+    sugestoes = None
+
     if request.method == 'POST':
         form = AgendamentoForm(request.POST, instance=agendamento)
         if form.is_valid():
-            agendamento = form.save()
+            galpao = form.cleaned_data['galpao']
+            data_hora = form.cleaned_data['data_hora']
 
-            produtos = []
-            i = 0
-            while True:
-                nome = request.POST.get(f'produtos[{i}][nome]')
-                quantidade = request.POST.get(f'produtos[{i}][quantidade]')
-                cubagem = request.POST.get(f'produtos[{i}][cubagem]')
-                if not nome:
-                    break
-                try:
-                    quantidade = float(quantidade)
-                    cubagem = float(cubagem)
-                except ValueError:
-                    quantidade = 0.0
-                    cubagem = 0.0
-                produtos.append((nome, quantidade, cubagem))
-                i += 1
+            # Verificação de disponibilidade antes de salvar
+            disponivel, resultado = verificar_disponibilidade(galpao, data_hora.date(), agendamento_id=agendamento.id)
 
-            # Limpa produtos antigos e salva os novos
-            agendamento.itens.all().delete()
-            for nome, quantidade, cubagem in produtos:
-                AgendamentoProduto.objects.create(
-                    agendamento=agendamento,
-                    mercadoria=nome,
-                    quantidade=quantidade,
-                    cubagem=cubagem
-                )
-
-            if request.user.is_gerente:
-                return redirect('painel_gerente')
+            if not disponivel:
+                mensagem_erro = resultado['mensagem']
+                sugestoes = {
+                    'anterior': resultado['anterior'],
+                    'posterior': resultado['posterior'],
+                }
             else:
-                return redirect('painel_user')
+                agendamento = form.save()
+
+                produtos = []
+                i = 0
+                while True:
+                    nome = request.POST.get(f'produtos[{i}][nome]')
+                    quantidade = request.POST.get(f'produtos[{i}][quantidade]')
+                    cubagem = request.POST.get(f'produtos[{i}][cubagem]')
+                    if not nome:
+                        break
+                    try:
+                        quantidade = float(quantidade)
+                        cubagem = float(cubagem)
+                    except ValueError:
+                        quantidade = 0.0
+                        cubagem = 0.0
+                    produtos.append((nome, quantidade, cubagem))
+                    i += 1
+
+                # Limpa produtos antigos e salva os novos
+                agendamento.itens.all().delete()
+                for nome, quantidade, cubagem in produtos:
+                    AgendamentoProduto.objects.create(
+                        agendamento=agendamento,
+                        mercadoria=nome,
+                        quantidade=quantidade,
+                        cubagem=cubagem
+                    )
+
+                if request.user.is_gerente:
+                    return redirect('painel_gerente')
+                else:
+                    return redirect('painel_user')
     else:
         form = AgendamentoForm(instance=agendamento)
 
-    return render(request, 'agendamento/agendamento_editar.html', {'form': form, 'agendamento': agendamento})
+    return render(
+        request,
+        'agendamento/agendamento_editar.html',
+        {
+            'form': form,
+            'agendamento': agendamento,
+            'mensagem_erro': mensagem_erro,
+            'sugestoes': sugestoes
+        }
+    )
+
 
 
 # ------------------ GERENTE: Painel ------------------

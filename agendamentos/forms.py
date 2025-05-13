@@ -30,5 +30,6 @@ class AgendamentoForm(forms.ModelForm):
                 'type': 'date',
                 'class': 'form-control',
                 'min': hoje,  # Impede seleção de datas anteriores
+                'id': 'id_data_hora'
             }
         )

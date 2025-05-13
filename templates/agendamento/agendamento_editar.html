@@ -1,8 +1,37 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Editar Agendamento{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-center">Editar Agendamento</h2>
+
+    {% if mensagem_erro %}
+    <div class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
+        <div>
+            {{ mensagem_erro }}<br>
+            {% if sugestoes.anterior %}
+                <strong>Data sugerida anterior:</strong> <span class="badge bg-info text-dark">{{ sugestoes.anterior }}</span>
+            {% endif %}
+            {% if sugestoes.posterior %}
+                <strong>Data sugerida posterior:</strong> <span class="badge bg-info text-dark">{{ sugestoes.posterior }}</span>
+            {% endif %}
+        </div>
+        <div>
+            {% if sugestoes.anterior %}
+                <button type="button" class="btn btn-sm btn-outline-primary usar-data" data-data="{{ sugestoes.anterior }}">
+                    Usar anterior
+                </button>
+            {% endif %}
+            {% if sugestoes.posterior %}
+                <button type="button" class="btn btn-sm btn-outline-primary usar-data" data-data="{{ sugestoes.posterior }}">
+                    Usar posterior
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 
     <form method="POST">
         {% csrf_token %}
@@ -93,14 +122,56 @@
     }
 
     function removerProduto(botao) {
-        botao.closest('.produto').remove();
+        const produto = botao.closest('.produto');
+        // Impede remoção se restar apenas um produto
+        if (document.querySelectorAll('.produto').length > 1) {
+            produto.remove();
+        } else {
+            alert('Não é possível remover o último produto.');
+        }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Bloqueia submissão caso exista mensagem de erro
+        const form = document.querySelector('form');
+        const mensagemErro = document.querySelector('.alert');
+
+        if (mensagemErro && form) {
+            form.addEventListener('submit', function (e) {
+                const erroTexto = mensagemErro.textContent || mensagemErro.innerText;
+
+                // Verifica se a mensagem de erro contém "limite de agendamentos"
+                if (erroTexto.includes('limite de agendamentos')) {
+                    e.preventDefault(); // Bloqueia o envio
+                    alert('Não é possível enviar o formulário: limite de agendamentos atingido.');
+                }
+            });
+        }
+
+        // Preenche a data sugerida ao clicar no botão
+        document.querySelectorAll('.usar-data').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const dataSelecionada = this.getAttribute('data-data');  // Vem como 'dd/mm/yyyy'
+                const inputData = document.querySelector('#id_data_hora');
+
+                if (inputData) {
+                    const partes = dataSelecionada.split('/');
+                    const dataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+                    inputData.value = dataFormatada;
+                }
+
+                // Remove o alerta visualmente para permitir nova submissão
+                mensagemErro.remove();
+            });
+        });
+    });
 </script>
 
 <style>
     .form-container {
         max-width: 900px;
-        margin: 0 auto;         
+        margin: 0 auto;
     }
 </style>
+
 {% endblock %}
