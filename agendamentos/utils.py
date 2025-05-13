@@ -4,7 +4,7 @@ from .models import Agendamento
 LIMITES_DOCAS = {
     'galpao1': 1,
     'galpao2': 3,
-    'galpao3': 5,
+    'galpao3': 3,
     'galpao4': 2,
 }
 
