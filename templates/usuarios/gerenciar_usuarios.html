@@ -31,13 +31,9 @@
                 <td>
                     {% if request.user.id != u.id %}
                         {% if u.is_active %}
-                            <a class="btn btn-warning btn-sm me-1" href="{% url 'desativar_usuario' u.id %}">
-                                <i class="bi bi-lock-fill"></i> Desativar
-                            </a>
+                            <a class="btn btn-warning btn-sm me-1" href="{% url 'desativar_usuario' u.id %}">Desativarcl</a>
                         {% else %}
-                            <a class="btn btn-success btn-sm me-1" href="{% url 'reativar_usuario' u.id %}">
-                                <i class="bi bi-unlock-fill"></i> Reativar
-                            </a>
+                            <a class="btn btn-success btn-sm me-1" href="{% url 'reativar_usuario' u.id %}">Reativar</a>
                         {% endif %}
                         <a class="btn btn-danger btn-sm" href="{% url 'excluir_usuario' u.id %}">
                             <i class="bi bi-trash-fill"></i> Excluir
