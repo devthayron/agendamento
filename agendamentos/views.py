@@ -35,7 +35,7 @@ def is_gerente(user):
 
 # ------------------ Visualizar Agendamentos ------------------
 
-# @login_required
+@login_required
 def painel_users_list(request):
     # Filtra os agendamentos do usuário logado e ordena por data mais recente
     agendamentos = Agendamento.objects.filter(usuario=request.user).order_by('-data_hora')
@@ -49,7 +49,7 @@ def painel_users_list(request):
 
 
 # ------------------ Criar Agendamento ------------------
-# @login_required
+@login_required
 def agendamento_criar(request):
     mensagem_erro = None
     sugestoes = None
@@ -114,7 +114,7 @@ def agendamento_criar(request):
 
 
 # ------------------ Editar Agendamento ------------------
-# @login_required
+@login_required
 def agendamento_editar(request, id):
     agendamento = get_object_or_404(Agendamento, id=id)
 
@@ -187,7 +187,7 @@ def agendamento_editar(request, id):
 
 
 # ------------------ GERENTE: Painel ------------------
-# @login_required
+@login_required
 @user_passes_test(is_gerente)
 def painel_gerente(request):
     data_inicial = request.GET.get('data_inicial')
@@ -236,7 +236,7 @@ def painel_gerente(request):
     return render(request, 'agendamento/painel_gerente.html', context)
 
 # ------------------ GERENTE: Ações ------------------
-# @login_required
+@login_required
 @user_passes_test(is_gerente)
 def cancelar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -244,7 +244,7 @@ def cancelar_agendamento(request, agendamento_id):
     agendamento.save()
     return redirect('painel_gerente')
 
-# @login_required
+@login_required
 @user_passes_test(is_gerente)
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -253,7 +253,7 @@ def confirmar_agendamento(request, agendamento_id):
         agendamento.save()
     return redirect('painel_gerente')
 
-# @login_required
+@login_required
 @user_passes_test(is_gerente)
 def finalizar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -264,7 +264,7 @@ def finalizar_agendamento(request, agendamento_id):
 
 
 # ------------------ GERENTE: Exportação CSV ------------------
-# @login_required
+@login_required
 @user_passes_test(is_gerente)
 def exportar_agendamentos_csv(request):
     agendamentos = Agendamento.objects.prefetch_related('itens').all()
