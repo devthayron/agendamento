@@ -9,13 +9,11 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
-from decouple import config,Csv
-
+from decouple import config
 import dj_database_url
-import pymysql
-pymysql.install_as_MySQLdb()
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=Csv())
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -94,28 +92,14 @@ WSGI_APPLICATION = 'agendamento_carros.wsgi.application'
 # }
 
 
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='sqlite:///db.sqlite3',  # para rodar localmente
-#         conn_max_age=600,
-#         ssl_require=True
-#     )
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
+    'default': dj_database_url.parse(
+        os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
+        conn_max_age=600
+    ),
 }
+
+
 
 # mySQL
 """
@@ -163,7 +147,7 @@ TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
