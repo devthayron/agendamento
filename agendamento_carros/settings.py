@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY','chave-secreta-temporaria-para-dev') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*","https://agendamento-tdc.up.railway.app"]
+ALLOWED_HOSTS = ['agendamento-tdc.up.railway.app']
 
 
 # Application definition
@@ -170,3 +170,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://agendamento-tdc.up.railway.app',
+]
