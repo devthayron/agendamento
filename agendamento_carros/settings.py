@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY','chave-secreta-temporaria-para-dev')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*","https://agendamento-tdc.up.railway.app"]
 
 
 # Application definition
@@ -167,3 +167,6 @@ LOGIN_URL = '/usuarios/login/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
