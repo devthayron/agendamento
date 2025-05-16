@@ -32,6 +32,17 @@ def is_gerente(user):
 #     html.write_pdf(response)
 #     return response
 
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+def criar_superusuario_temporario(request):
+    if User.objects.filter(username='admin').exists():
+        return HttpResponse("Superusuário já existe.")
+
+    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+    return HttpResponse("Superusuário criado com sucesso! Usuário: admin / Senha: admin123")
+
+
 
 # ------------------ Visualizar Agendamentos ------------------
 
