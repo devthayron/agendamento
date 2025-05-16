@@ -11,5 +11,4 @@ urlpatterns = [
     path('agendamentos/', views.painel_users_list, name='painel_user'),  
     path('agendamentos/editar/<int:id>/', views.agendamento_editar, name='agendamento_editar'),
 #   path('agendamento/<int:agendamento_id>/pdf/', views.baixar_agendamento_pdf, name='baixar_agendamento_pdf'),
-    path('criar-admin/', views.criar_superusuario_temporario, name='criar_admin'),
 ]

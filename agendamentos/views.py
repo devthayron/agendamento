@@ -32,26 +32,10 @@ def is_gerente(user):
 #     html.write_pdf(response)
 #     return response
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-
-def criar_superusuario_temporario(request):
-    if User.objects.filter(username='admin').exists():
-        return HttpResponse("Superusuário já existe.")
-    
-    User.objects.create_superuser(
-        username='admin',
-        email='admin@example.com',
-        password='admin123'
-    )
-    return HttpResponse("Superusuário criado com sucesso!<br>Usuário: <b>admin</b><br>Senha: <b>admin123</b>")
-
-
-
 
 # ------------------ Visualizar Agendamentos ------------------
 
-@login_required
+# @login_required
 def painel_users_list(request):
     # Filtra os agendamentos do usuário logado e ordena por data mais recente
     agendamentos = Agendamento.objects.filter(usuario=request.user).order_by('-data_hora')
@@ -65,7 +49,7 @@ def painel_users_list(request):
 
 
 # ------------------ Criar Agendamento ------------------
-@login_required
+# @login_required
 def agendamento_criar(request):
     mensagem_erro = None
     sugestoes = None
@@ -130,7 +114,7 @@ def agendamento_criar(request):
 
 
 # ------------------ Editar Agendamento ------------------
-@login_required
+# @login_required
 def agendamento_editar(request, id):
     agendamento = get_object_or_404(Agendamento, id=id)
 
@@ -203,7 +187,7 @@ def agendamento_editar(request, id):
 
 
 # ------------------ GERENTE: Painel ------------------
-@login_required
+# @login_required
 @user_passes_test(is_gerente)
 def painel_gerente(request):
     data_inicial = request.GET.get('data_inicial')
@@ -252,7 +236,7 @@ def painel_gerente(request):
     return render(request, 'agendamento/painel_gerente.html', context)
 
 # ------------------ GERENTE: Ações ------------------
-@login_required
+# @login_required
 @user_passes_test(is_gerente)
 def cancelar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -260,7 +244,7 @@ def cancelar_agendamento(request, agendamento_id):
     agendamento.save()
     return redirect('painel_gerente')
 
-@login_required
+# @login_required
 @user_passes_test(is_gerente)
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -269,7 +253,7 @@ def confirmar_agendamento(request, agendamento_id):
         agendamento.save()
     return redirect('painel_gerente')
 
-@login_required
+# @login_required
 @user_passes_test(is_gerente)
 def finalizar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
@@ -280,7 +264,7 @@ def finalizar_agendamento(request, agendamento_id):
 
 
 # ------------------ GERENTE: Exportação CSV ------------------
-@login_required
+# @login_required
 @user_passes_test(is_gerente)
 def exportar_agendamentos_csv(request):
     agendamentos = Agendamento.objects.prefetch_related('itens').all()
