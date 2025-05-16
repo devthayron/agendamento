@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import config,Csv
+
+import dj_database_url
+import pymysql
+pymysql.install_as_MySQLdb()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -89,10 +93,7 @@ WSGI_APPLICATION = 'agendamento_carros.wsgi.application'
 #     }
 # }
 
-import dj_database_url
-import pymysql
-pymysql.install_as_MySQLdb()
-from decouple import config, Csv
+
 
 # DATABASES = {
 #     'default': dj_database_url.config(
