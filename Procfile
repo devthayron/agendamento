@@ -1,0 +1,1 @@
+web: gunicorn agendamento_carros.wsgi --log-file -
