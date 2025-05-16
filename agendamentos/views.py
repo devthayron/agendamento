@@ -38,9 +38,14 @@ from django.http import HttpResponse
 def criar_superusuario_temporario(request):
     if User.objects.filter(username='admin').exists():
         return HttpResponse("Superusuário já existe.")
+    
+    User.objects.create_superuser(
+        username='admin',
+        email='admin@example.com',
+        password='admin123'
+    )
+    return HttpResponse("Superusuário criado com sucesso!<br>Usuário: <b>admin</b><br>Senha: <b>admin123</b>")
 
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-    return HttpResponse("Superusuário criado com sucesso! Usuário: admin / Senha: admin123")
 
 
 
