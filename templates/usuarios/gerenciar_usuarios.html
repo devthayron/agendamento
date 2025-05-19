@@ -31,7 +31,7 @@
                 <td>
                     {% if request.user.id != u.id %}
                         {% if u.is_active %}
-                            <a class="btn btn-warning btn-sm me-1" href="{% url 'desativar_usuario' u.id %}">Desativarcl</a>
+                            <a class="btn btn-warning btn-sm me-1" href="{% url 'desativar_usuario' u.id %}">Desativar</a>
                         {% else %}
                             <a class="btn btn-success btn-sm me-1" href="{% url 'reativar_usuario' u.id %}">Reativar</a>
                         {% endif %}
