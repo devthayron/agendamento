@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY','chave-secreta-temporaria-para-dev') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['agendamento-tdc.up.railway.app']
+ALLOWED_HOSTS = ['agendamento-tdc.up.railway.app','*']
 
 
 # Application definition
