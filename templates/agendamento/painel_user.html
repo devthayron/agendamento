@@ -85,9 +85,9 @@
                 {% if ag.status == 'pendente' %}
                     <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
                 {% else %}
-                    <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
+                    <!-- <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
                         <i class="bi bi-file-earmark-pdf"></i> PDF
-                    </a>                
+                    </a>                 -->
                 {% endif %}
             </td>
         </tr>
