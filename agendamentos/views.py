@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, user_passes_test
-from weasyprint import HTML
+from xhtml2pdf import pisa  
 from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
 from .utils import verificar_disponibilidade
@@ -21,16 +21,21 @@ def baixar_agendamento_pdf(request, agendamento_id):
     # busca o agendamento pelo ID e verifica se é do usuário.
     agendamento = get_object_or_404(Agendamento, id=agendamento_id, usuario=request.user)
 
+    # Renderiza o HTML para a página
     html_string = render_to_string('agendamento/agendamento_pdf.html', {'agendamento': agendamento})
-    html = HTML(string=html_string)
+
+    # Cria a resposta PDF
     response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename=agendamento_{agendamento.id}.pdf'
 
-    # Define o nome do arquivo PDF
-    response['Content-Disposition'] = f'filename=agendamento_{agendamento.id}.pdf'
+    # Converte o HTML para PDF usando xhtml2pdf
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
 
-    html.write_pdf(response)
+    # Se ocorrer algum erro na conversão, retornamos uma resposta de erro
+    if pisa_status.err:
+        return HttpResponse('Erro ao gerar PDF', status=500)
+
     return response
-
 
 # ------------------ Visualizar Agendamentos ------------------
 
