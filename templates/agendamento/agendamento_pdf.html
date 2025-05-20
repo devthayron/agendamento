@@ -10,7 +10,7 @@
     </style>
 </head>
 <body>
-    <h1>Resumo do Agendamento</h1>
+    <h1>Agendamento Nr: {{ agendamento.id }}</h1>
     <div class="dados">
         <p><strong>Data:</strong> {{ agendamento.data_hora|date:"d/m/Y" }}</p>
         <p><strong>Fornecedor:</strong> {{ agendamento.fornecedor }}</p>
@@ -29,6 +29,7 @@
         {% endfor %}
         <hr>
         <p><strong>Total de Cubagem:</strong> {{ agendamento.cubagem_total }}</p>
+        <p><strong>Total de Quantidade:</strong> {{ agendamento.quantidade_total }}</p>
     </div>
 </body>
 </html>

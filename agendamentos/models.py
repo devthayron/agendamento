@@ -9,7 +9,7 @@ class Agendamento(models.Model):
     fornecedor = models.CharField(max_length=100)
     email = models.EmailField(max_length=500)
     transportadora = models.CharField(max_length=100)
-    nota_fiscal = models.IntegerField()
+    nota_fiscal = models.CharField(max_length=100)
     pedido = models.CharField(max_length=100)
 
     GALPAO_CHOICES = [

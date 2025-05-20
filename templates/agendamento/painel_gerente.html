@@ -75,7 +75,7 @@
                                   <div class="modal-body">
                                     {% for item in ag.itens.all %}
                                         <p><strong>{{ item.mercadoria }}</strong><br>
-                                        NF: {{ item.nota_fiscal|floatformat:"-2" }}<br>
+                                        <!-- NF: {{ item.nota_fiscal|floatformat:"-2" }}<br> -->
                                         Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
                                         Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
                                         <hr>
