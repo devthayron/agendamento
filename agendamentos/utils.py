@@ -57,3 +57,4 @@ def verificar_disponibilidade(galpao, data_agendamento, agendamento_id=None):
         "anterior": data_disponivel_anterior.strftime('%d/%m/%Y') if data_disponivel_anterior else None,
         "posterior": data_disponivel_posterior.strftime('%d/%m/%Y') if data_disponivel_posterior else None,
     }
+

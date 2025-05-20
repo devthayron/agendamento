@@ -5,8 +5,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils import timezone
-# from weasyprint import HTML
+from weasyprint import HTML
 from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
 from .utils import verificar_disponibilidade
@@ -16,21 +15,21 @@ def is_gerente(user):
     return user.is_authenticated and user.is_gerente
 
 
-# # ------------------  PDF  ------------------
-# @login_required
-# def baixar_agendamento_pdf(request, agendamento_id):
-#     # busca o agendamento pelo ID e verifica se é do usuário.
-#     agendamento = get_object_or_404(Agendamento, id=agendamento_id, usuario=request.user)
+# ------------------  PDF  ------------------
+@login_required
+def baixar_agendamento_pdf(request, agendamento_id):
+    # busca o agendamento pelo ID e verifica se é do usuário.
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id, usuario=request.user)
 
-#     html_string = render_to_string('agendamento/agendamento_pdf.html', {'agendamento': agendamento})
-#     html = HTML(string=html_string)
-#     response = HttpResponse(content_type='application/pdf')
+    html_string = render_to_string('agendamento/agendamento_pdf.html', {'agendamento': agendamento})
+    html = HTML(string=html_string)
+    response = HttpResponse(content_type='application/pdf')
 
-#     # Define o nome do arquivo PDF
-#     response['Content-Disposition'] = f'filename=agendamento_{agendamento.id}.pdf'
+    # Define o nome do arquivo PDF
+    response['Content-Disposition'] = f'filename=agendamento_{agendamento.id}.pdf'
 
-#     html.write_pdf(response)
-#     return response
+    html.write_pdf(response)
+    return response
 
 
 # ------------------ Visualizar Agendamentos ------------------
