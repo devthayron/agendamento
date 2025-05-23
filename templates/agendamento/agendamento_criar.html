@@ -35,7 +35,8 @@
 
     <form method="post">
         {% csrf_token %}
-        <div class="row">
+         {{ form|crispy }}
+        <!-- <div class="row">
             <div class="col-md-4">
                 {{ form.galpao|as_crispy_field }}
                 {{ form.cnpj|as_crispy_field }}
@@ -51,7 +52,7 @@
                 {{ form.nota_fiscal|as_crispy_field }}
                 {{ form.data_hora|as_crispy_field }}
             </div>
-            </div>
+            </div> -->
 
 
         <hr>
