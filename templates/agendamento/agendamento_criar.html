@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags static %}
 
 {% block title %}Agendamento{% endblock %}
 
 {% block content %}
-
 <div class="form-container shadow p-4 bg-light rounded">
     <h2 class="text-center mb-4">Agendar Carro para Descarrego</h2>
+
     {% if mensagem_erro %}
     <div class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
         <div>
@@ -35,146 +35,56 @@
 
     <form method="post">
         {% csrf_token %}
-         {{ form|crispy }}
-        <!-- <div class="row">
-            <div class="col-md-4">
-                {{ form.galpao|as_crispy_field }}
-                {{ form.cnpj|as_crispy_field }}
-                {{ form.fornecedor|as_crispy_field }}
-            </div>
-            <div class="col-md-4">
-                {{ form.email|as_crispy_field }}
-                {{ form.transportadora|as_crispy_field }}
-                {{ form.tipo_carro|as_crispy_field }}
-            </div>
-            <div class="col-md-4">
-                {{ form.pedido|as_crispy_field }}
-                {{ form.nota_fiscal|as_crispy_field }}
-                {{ form.data_hora|as_crispy_field }}
-            </div>
-            </div> -->
-
+        {{ form|crispy }}
 
         <hr>
         <h4 class="mb-3">Produtos</h4>
         <div id="produtos">
-            <div class="produto row align-items-end g-2 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Nome do Produto</label>
-                    <input type="text" name="produtos[0][nome]" class="form-control" placeholder="Digite o nome do produto" required>
+
+            <div class="produto mb-4 p-3 border rounded bg-white shadow-sm">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Nome do Produto</label>
+                        <input type="text" name="produtos[0][nome]" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quantidade</label>
+                        <input type="number" name="produtos[0][quantidade]" class="form-control" step="any" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Cubagem</label>
+                        <input type="number" name="produtos[0][cubagem]" class="form-control" step="any" required>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Quantidade</label>
-                    <input type="number" name="produtos[0][quantidade]" class="form-control" step="any" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Cubagem</label>
-                    <input type="number" name="produtos[0][cubagem]" class="form-control" step="any" required>
-                </div>
-                <div class="col-md-2 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+
+                <div class="row mt-3">
+                    <div class="col-6 d-flex justify-content-start">
+                        <button type="button" class="btn btn-danger w-100" onclick="removerProduto(this)">Remover</button>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end">
+                        <button type="button" class="btn btn-success w-100" onclick="adicionarProduto()">+ Adicionar</button>
+                    </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="mb-4">
-            <button type="button" class="btn btn-success" onclick="adicionarProduto()">+ Adicionar Produto</button>
-        </div>
+        <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+            <button class="btn btn-primary btn-lg" type="submit">Fazer Agendamento</button>
 
-       <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
-    <button class="btn btn-primary btn-lg" type="submit">Fazer Agendamento</button>
-    
-    {% if user.is_gerente %}
-        <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info btn-lg">Ver Todos os Agendamentos</a>
-    {% else %}
-        <a href="{% url 'painel_user' %}" class="btn btn-outline-info btn-lg">Ver Meus Agendamentos</a>
-    {% endif %}
+            {% if user.is_gerente %}
+                <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info btn-lg">Ver Todos os Agendamentos</a>
+            {% else %}
+                <a href="{% url 'painel_user' %}" class="btn btn-outline-info btn-lg">Ver Meus Agendamentos</a>
+            {% endif %}
+        </div>
+    </form>
 </div>
+{% endblock %}
 
-
+{% block extra_js %}
 <script>
     let index = 1;
-
-    function adicionarProduto() {
-        const produtosDiv = document.getElementById('produtos');
-        const novoProduto = document.createElement('div');
-        novoProduto.classList.add('produto', 'row', 'align-items-end', 'g-2', 'mb-3');
-        novoProduto.innerHTML = `
-            <div class="col-md-4">
-                <label class="form-label">Nome do Produto</label>
-                <input type="text" name="produtos[${index}][nome]" class="form-control" required>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Quantidade</label>
-                <input type="number" name="produtos[${index}][quantidade]" class="form-control" step="any" required>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Cubagem</label>
-                <input type="number" name="produtos[${index}][cubagem]" class="form-control" step="any" required>
-            </div>
-            <div class="col-md-2 text-end">
-                <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
-            </div>
-        `;
-        produtosDiv.appendChild(novoProduto);
-        index++;
-    }
-
-    function removerProduto(botao) {
-        const produto = botao.closest('.produto');
-        // Verifica se o número de produtos é maior que 1
-        if (document.querySelectorAll('.produto').length > 1) {
-            produto.remove();
-        } else {
-            // Não permite a remoção quando houver apenas um produto
-            alert('Não é possível remover o último produto.');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Bloqueia submissão caso exista mensagem de erro
-        const form = document.querySelector('form');
-        const mensagemErro = document.querySelector('.alert');
-
-        if (mensagemErro && form) {
-            form.addEventListener('submit', function (e) {
-                const erroTexto = mensagemErro.textContent || mensagemErro.innerText;
-
-                // Verifica se a mensagem de erro contém "limite de agendamentos"
-                if (erroTexto.includes('limite de agendamentos')) {
-                    e.preventDefault(); // Bloqueia o envio
-                    alert('Não é possível enviar o formulário: limite de agendamentos atingido.');
-                }
-            });
-        }
-
-        // Preenche a data sugerida ao clicar no botão
-        document.querySelectorAll('.usar-data').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                const dataSelecionada = this.getAttribute('data-data');  // Vem como 'dd/mm/yyyy'
-                const inputData = document.querySelector('#id_data_hora');
-
-                if (inputData) {
-                    const partes = dataSelecionada.split('/');
-                    const dataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
-                    inputData.value = dataFormatada;
-                }
-
-                // Remove o alerta visualmente para permitir nova submissão
-                mensagemErro.remove();
-            });
-        });
-    });
 </script>
-
-<style>
-    .form-container {
-        max-width: 1200px;  /* maior que 900px */
-        width: 90vw;        /* ocupa 90% da largura da viewport */
-        margin: 0 auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-</style>
-
+<script src="{% static 'js/agendamento.js' %}"></script>
 {% endblock %}

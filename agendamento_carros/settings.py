@@ -82,6 +82,9 @@ USE_TZ = False
 
 # Arquivos estáticos
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Configurações de segurança: só ativa em produção

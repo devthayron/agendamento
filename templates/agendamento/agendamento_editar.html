@@ -4,8 +4,8 @@
 {% block title %}Editar Agendamento{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Editar Agendamento</h2>
+<div class="container mt-5 form-container">
+    <h2 class="text-center mb-4">Editar Agendamento</h2>
 
     {% if mensagem_erro %}
     <div class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
@@ -43,49 +43,54 @@
             </div>
         {% endif %}
 
-        {{ form.as_p }} 
+        {{ form.as_p }}
 
         <hr>
         <h4 class="mb-3">Produtos</h4>
         <div id="produtos">
             {% for item in agendamento.itens.all %}
-            <div class="produto row align-items-end g-2 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Nome do Produto</label>
-                    <input type="text" name="produtos[{{ forloop.counter0 }}][nome]" class="form-control" value="{{ item.mercadoria }}" required>
+            <div class="produto p-3 mb-4 border rounded bg-white shadow-sm">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Nome do Produto</label>
+                        <input type="text" name="produtos[{{ forloop.counter0 }}][nome]" class="form-control" value="{{ item.mercadoria }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quantidade</label>
+                        <input type="number" name="produtos[{{ forloop.counter0 }}][quantidade]" class="form-control" value="{{ item.quantidade|floatformat:'-2' }}" step="any" min="0" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Cubagem</label>
+                        <input type="number" name="produtos[{{ forloop.counter0 }}][cubagem]" class="form-control" value="{{ item.cubagem|floatformat:'-2' }}" step="any" min="0" required>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Quantidade</label>
-                    <input type="number" name="produtos[{{ forloop.counter0 }}][quantidade]" class="form-control" value="{{ item.quantidade|floatformat:'-2' }}" step="any" min="0" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Cubagem</label>
-                    <input type="number" name="produtos[{{ forloop.counter0 }}][cubagem]" class="form-control" value="{{ item.cubagem|floatformat:'-2' }}" step="any" min="0" required>
-                </div>
-                <div class="col-md-2 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+
+                <div class="row mt-3 g-2">
+                    <div class="col-12 d-flex justify-content-start">
+                        <button type="button" class="btn btn-danger w-100" onclick="removerProduto(this)">Remover</button>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
 
         <div class="mb-4">
-            <button type="button" class="btn btn-success" onclick="adicionarProduto()">+ Adicionar Produto</button>
+            <button type="button" class="btn btn-success w-100" onclick="adicionarProduto()">+ Adicionar Produto</button>
         </div>
 
         {% if user.is_gerente %}
-        <div class="d-flex justify-content-between mb-4">
-            <button class="btn btn-primary btn-lg flex-grow-1 me-2" type="submit">Salvar Alterações</button>
-            <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-lg flex-grow-1 ms-2">Cancelar</a>
+        <div class="d-flex justify-content-between mb-4 gap-3 flex-wrap">
+            <button class="btn btn-primary btn-lg flex-grow-1" type="submit">Salvar Alterações</button>
+            <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-lg flex-grow-1">Cancelar</a>
         </div>
         {% else %}
-        <div class="d-grid">
+        <div class="d-grid mb-4">
             <button class="btn btn-primary btn-lg" type="submit">Salvar Alterações</button>
-        </div>  
+        </div>
         {% endif %}
+
     </form>
 
-    <br>
     {% if user.is_gerente %}
         <a href="{% url 'painel_gerente' %}" class="btn btn-secondary">Voltar para a Lista</a>
     {% else %}
@@ -99,31 +104,37 @@
     function adicionarProduto() {
         const produtosDiv = document.getElementById('produtos');
         const novoProduto = document.createElement('div');
-        novoProduto.classList.add('produto', 'row', 'align-items-end', 'g-2', 'mb-3');
+        novoProduto.classList.add('produto', 'p-3', 'mb-4', 'border', 'rounded', 'bg-white', 'shadow-sm');
+
         novoProduto.innerHTML = `
-            <div class="col-md-4">
-                <label class="form-label">Nome do Produto</label>
-                <input type="text" name="produtos[${index}][nome]" class="form-control" required>
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">Nome do Produto</label>
+                    <input type="text" name="produtos[${index}][nome]" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quantidade</label>
+                    <input type="number" name="produtos[${index}][quantidade]" class="form-control" step="any" min="0" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Cubagem</label>
+                    <input type="number" name="produtos[${index}][cubagem]" class="form-control" step="any" min="0" required>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Quantidade</label>
-                <input type="number" name="produtos[${index}][quantidade]" class="form-control" required>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Cubagem</label>
-                <input type="number" name="produtos[${index}][cubagem]" class="form-control" required>
-            </div>
-            <div class="col-md-2 text-end">
-                <button type="button" class="btn btn-danger" onclick="removerProduto(this)">Remover</button>
+
+            <div class="row mt-3 g-2">
+                <div class="col-12 d-flex justify-content-start">
+                    <button type="button" class="btn btn-danger w-100" onclick="removerProduto(this)">Remover</button>
+                </div>
             </div>
         `;
+
         produtosDiv.appendChild(novoProduto);
         index++;
     }
 
     function removerProduto(botao) {
         const produto = botao.closest('.produto');
-        // Impede remoção se restar apenas um produto
         if (document.querySelectorAll('.produto').length > 1) {
             produto.remove();
         } else {
@@ -132,26 +143,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Bloqueia submissão caso exista mensagem de erro
         const form = document.querySelector('form');
         const mensagemErro = document.querySelector('.alert');
 
         if (mensagemErro && form) {
             form.addEventListener('submit', function (e) {
                 const erroTexto = mensagemErro.textContent || mensagemErro.innerText;
-
-                // Verifica se a mensagem de erro contém "limite de agendamentos"
                 if (erroTexto.includes('limite de agendamentos')) {
-                    e.preventDefault(); // Bloqueia o envio
+                    e.preventDefault();
                     alert('Não é possível enviar o formulário: limite de agendamentos atingido.');
                 }
             });
         }
 
-        // Preenche a data sugerida ao clicar no botão
         document.querySelectorAll('.usar-data').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                const dataSelecionada = this.getAttribute('data-data');  // Vem como 'dd/mm/yyyy'
+                const dataSelecionada = this.getAttribute('data-data');
                 const inputData = document.querySelector('#id_data_hora');
 
                 if (inputData) {
@@ -160,8 +167,7 @@
                     inputData.value = dataFormatada;
                 }
 
-                // Remove o alerta visualmente para permitir nova submissão
-                mensagemErro.remove();
+                if (mensagemErro) mensagemErro.remove();
             });
         });
     });
@@ -171,6 +177,20 @@
     .form-container {
         max-width: 900px;
         margin: 0 auto;
+    }
+
+    /* Responsividade para celular */
+    @media (max-width: 575.98px) {
+        .form-container {
+            padding: 0 1rem;
+        }
+        .btn {
+            font-size: 1.1rem;
+            padding: 0.5rem 0;
+        }
+        .produto .row > div {
+            margin-bottom: 1rem;
+        }
     }
 </style>
 

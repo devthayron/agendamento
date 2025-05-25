@@ -3,12 +3,10 @@
 {% block content %}
 <h3 class="text-center">Meus Agendamentos</h3>
 
-<!-- Botão para criar novo agendamento -->
 <div class="text-center mb-4">
     <a href="{% url 'agendamento_criar' %}" class="btn btn-success">Criar Novo Agendamento</a>
 </div>
 
-<!-- Tabela de Agendamentos -->
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -27,77 +25,176 @@
     <tbody>
         {% for ag in page_obj %}
         <tr>
-            <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
-            <td>{{ ag.galpao }}</td>
-            <td>{{ ag.fornecedor }}</td>
-            <td>{{ ag.transportadora }}</td>
-            <td>{{ ag.tipo_carro }}</td>
-            <td>{{ ag.pedido }}</td>
-            <td>{{ ag.nota_fiscal }}</td>
-            <td>
+            <td data-label="Data">{{ ag.data_hora|date:"d/m/Y" }}</td>
+            <td data-label="Galpão">{{ ag.galpao }}</td>
+            <td data-label="Fornecedor">{{ ag.fornecedor }}</td>
+            <td data-label="Transportadora">{{ ag.transportadora }}</td>
+            <td data-label="Tipo de Carga">{{ ag.tipo_carro }}</td>
+            <td data-label="Pedido">{{ ag.pedido }}</td>
+            <td data-label="Nota Fiscal">{{ ag.nota_fiscal }}</td>
+            <td data-label="Produtos" class="produtos-cell text-center">
                 {% if ag.itens.exists %}
-                    <!-- Botão para abrir o modal -->
-                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#produtosModal{{ ag.id }}">
-                        <i class="bi bi-eye"></i> Ver
-                    </button>
+                <button type="button" class="btn btn-outline-primary btn-sm btn-ver-produtos" data-bs-toggle="modal" data-bs-target="#produtosModal{{ ag.id }}">
+                    <i class="bi bi-eye"></i> Ver
+                </button>
 
-                    <!-- Modal para visualização dos produtos e cubagem total -->
-                    <div class="modal fade" id="produtosModal{{ ag.id }}" tabindex="-1" aria-labelledby="produtosModalLabel{{ ag.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="produtosModalLabel{{ ag.id }}">Produtos do Agendamento</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    {% for item in ag.itens.all %}
-                                        <p><strong>{{ item.mercadoria }}</strong><br>
-                                        Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
-                                        Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
-                                        <hr>
-                                    {% endfor %}
-                                    <p class="fw-bold text-end text-success">
-                                        Cubagem Total: {{ ag.cubagem_total|floatformat:"-2" }}
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                                </div>
+                <div class="modal fade" id="produtosModal{{ ag.id }}" tabindex="-1" aria-labelledby="produtosModalLabel{{ ag.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="produtosModalLabel{{ ag.id }}">Produtos do Agendamento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% for item in ag.itens.all %}
+                                <p><strong>{{ item.mercadoria }}</strong><br>
+                                    Quantidade: {{ item.quantidade|floatformat:"-2" }}<br>
+                                    Cubagem: {{ item.cubagem|floatformat:"-2" }}</p>
+                                <hr>
+                                {% endfor %}
+                                <p class="fw-bold text-end text-success">
+                                    Cubagem Total: {{ ag.cubagem_total|floatformat:"-2" }}
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% else %}
-                    <span class="text-muted">Nenhum produto</span>
+                <span class="text-muted">Nenhum produto</span>
                 {% endif %}
             </td>
-            <td>
+            <td data-label="Status">
                 {% if ag.status == 'pendente' %}
-                    <span class="badge bg-warning">Pendente</span>
+                <span class="badge bg-warning">Pendente</span>
                 {% elif ag.status == 'confirmado' %}
-                    <span class="badge bg-info">Confirmado</span>
+                <span class="badge bg-info">Confirmado</span>
                 {% elif ag.status == 'cancelado' %}
-                    <span class="badge bg-danger">Cancelado</span>
+                <span class="badge bg-danger">Cancelado</span>
                 {% elif ag.status == 'finalizado' %}
-                    <span class="badge bg-success">Finalizado</span>
+                <span class="badge bg-success">Finalizado</span>
                 {% endif %}
             </td>
-            <td>
+            <td data-label="Ação">
                 {% if ag.status == 'pendente' %}
-                    <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
                 {% else %}
-                    <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
-                        <i class="bi bi-file-earmark-pdf"></i> PDF
-                    </a>         
+                <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </a>
                 {% endif %}
             </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="11" class="text-center">Nenhum agendamento cadastrado.</td>
+            <td colspan="10" class="text-center">Nenhum agendamento cadastrado.</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 {% include 'paginacao.html' %}
+
+<!-- Responsividade Mobile -->
+<style>
+@media (max-width: 767.98px) {
+    table thead {
+        display: none;
+    }
+    table, tbody, tr, td {
+        display: block;
+        width: 100%;
+    }
+    tr {
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        background-color: #fff;
+    }
+    td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    td:last-child {
+        border-bottom: 0;
+    }
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        padding-left: 0.5rem;
+        font-weight: 600;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Ação */
+    td[data-label="Ação"]::before {
+        content: none;
+    }
+    td[data-label="Ação"] {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+        padding-left: 0;
+    }
+    td[data-label="Ação"] a.btn {
+        width: 100%;
+    }
+
+    /* Produtos alinhado ao centro */
+    td.produtos-cell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        position: relative;
+        padding-left: 0 !important;
+    }
+    td.produtos-cell .btn-ver-produtos {
+        position: static;
+        transform: none;
+    }
+
+    /* Status alinhado à direita */
+    td[data-label="Status"] {
+        text-align: right;
+        padding-right: 1rem;
+    }
+    td[data-label="Status"] .badge {
+        display: inline-block;
+        font-size: 0.9rem;
+        padding: 0.4em 0.8em;
+    }
+
+    /* Modal adaptado */
+    .modal-dialog {
+        max-width: 90%;
+        margin: 1.75rem auto;
+    }
+}
+
+/* Botão "Ver Produtos" no meio */
+.produtos-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+}
+
+.produtos-cell .btn-ver-produtos {
+    position: static;
+    transform: none;
+}
+</style>
 
 {% endblock %}
