@@ -25,8 +25,7 @@
         <!-- Seja Bem-Vindo no desktop (quando não logado) -->
         {% if not user.is_authenticated %}
             <div class="navbar-seja-bem-vindo d-none d-sm-flex position-absolute start-0 ps-3" style="top: 50%; transform: translateY(-50%); z-index: 1000;">
-                <i class="bi bi-person-circle fs-5 text-white me-1"></i>
-                <span>Seja Bem-Vindo</span>
+                <span style="color: white;">Seja Bem-Vindo</span>
             </div>
         {% endif %}
 
@@ -45,7 +44,7 @@
                 <span class="d-sm-none">Olá, {{ request.user }}</span>
             {% else %}
                 <i class="bi bi-person-circle fs-5 text-white me-1"></i>
-                <span class="d-sm-none">Seja Bem-Vindo</span>
+                <span class="d-sm-none" style="color: white;">Seja Bem-Vindo</span>
             {% endif %}
         </span>
 

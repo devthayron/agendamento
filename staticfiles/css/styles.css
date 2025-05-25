@@ -66,6 +66,7 @@
     line-height: 1;
 }
 
+
 /* Ajuste do menu colapsado no mobile */
 @media (max-width: 575.98px) {
     .navbar {
