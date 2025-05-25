@@ -1,0 +1,142 @@
+ body {
+    padding-bottom: 90px;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(to right, #343a40, #212529);
+    min-height: 56px;
+    position: relative;
+    padding-top: 0.3rem; /* espaço para texto fixo */
+    padding-bottom: 0.3rem;
+    overflow: visible; /* evitar quebra visual */
+}
+
+/* Ícone hamburguer branco */
+.navbar-toggler {
+    border: none;
+    z-index: 1100; /* acima do texto */
+    display: flex;
+    align-items: center; /* centraliza verticalmente o botão */
+}
+
+.navbar-toggler-icon {
+    background-image: url(
+        "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"
+    );
+    position: relative;
+    top: -6px; /* ajustei para -6px para não subir demais */
+    width: 30px;
+    height: 30px;
+}
+
+/* Navbar links com texto branco */
+.navbar-brand,
+.nav-link,
+.navbar-text {
+    font-weight: 500;
+    color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: gray !important;
+}
+
+/* Container navbar ajustado para alinhamento */
+.navbar .container {
+    display: flex;
+    align-items: center; /* centraliza verticalmente */
+    justify-content: space-between;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    position: relative;
+}
+
+/* TEXTO FIXO NO TOPO E CENTRALIZADO NO MOBILE */
+.navbar-text-fixed {
+    position: absolute;
+    top: 0.01rem; /* leve ajuste para ficar mais próximo */
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 1rem;
+    z-index: 1000;
+    line-height: 1;
+}
+
+/* Ajuste do menu colapsado no mobile */
+@media (max-width: 575.98px) {
+    .navbar {
+        min-height: 65px; /* altura menor para texto e menu */
+        padding-top: 1.8rem; /* espaço para texto fixo no topo */
+        padding-bottom: 0.2rem;
+    }
+
+    #navbarNav {
+        margin-top: 0.25rem !important; /* menos espaço acima do menu */
+        transition: none !important; /* remover transição pra evitar "duplo ajuste" */
+    }
+}
+
+/* Footer compacto e responsivo */
+footer {
+    background-color: #212529;
+    font-size: 0.65rem; /* fonte menor */
+    color: #f8f9fa;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 0.3rem 0.8rem; /* menos padding */
+    white-space: nowrap; /* evitar quebra em celular */
+    overflow-x: auto; /* permitir scroll horizontal se precisar */
+}
+
+footer a {
+    color: #f8f9fa;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    footer {
+        padding: 0.3rem 0.8rem;
+        text-align: center;
+        white-space: nowrap; /* mantém tudo numa linha */
+        overflow-x: auto;
+    }
+
+    footer .container {
+        flex-direction: row !important; /* forçar em linha */
+        justify-content: center !important;
+        gap: 0.4rem !important; /* espaço pequeno entre itens */
+        flex-wrap: nowrap !important; /* evitar quebra de linha */
+        align-items: center;
+    }
+}
+
+/* Ajustes texto navbar-brand no desktop */
+.navbar-brand span.d-sm-none {
+    display: inline;
+}
+
+.navbar-brand span.d-none.d-sm-inline {
+    display: none;
+}
+
+@media (min-width: 576px) {
+    .navbar-brand span.d-sm-none {
+        display: none;
+    }
+    .navbar-brand span.d-none.d-sm-inline {
+        display: inline;
+    }
+}
+.navbar-toggler-icon {
+  filter: invert(1); /* inverte a cor para branco */
+}
