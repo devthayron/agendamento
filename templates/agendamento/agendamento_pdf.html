@@ -12,7 +12,7 @@
 <body>
     <h1>Agendamento Nr: {{ agendamento.id }}</h1>
     <div class="dados">
-        <p><strong>Data:</strong> {{ agendamento.data_hora|date:"d/m/Y" }}</p>
+        <h2><strong>Data:</strong> {{ agendamento.data_hora|date:"d/m/Y" }}</h2>
         <p><strong>Fornecedor:</strong> {{ agendamento.fornecedor }}</p>
         <p><strong>Transportadora:</strong> {{ agendamento.transportadora }}</p>
         <p><strong>Pedido:</strong> {{ agendamento.pedido }}</p>

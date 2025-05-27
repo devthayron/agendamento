@@ -1,5 +1,5 @@
 from datetime import timedelta
-from .models import Agendamento
+from agendamentos.models import Agendamento
 
 LIMITES_DOCAS = {
     'galpao1': 1,

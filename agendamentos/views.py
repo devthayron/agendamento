@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from xhtml2pdf import pisa  
 from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
-from .utils import verificar_disponibilidade
+from agendamentos.utils.limite_doca import verificar_disponibilidade
 
 # verifica se o usuário está logado e se é 'gerente'
 def is_gerente(user):
@@ -191,9 +191,18 @@ def agendamento_editar(request, id):
 
 
 # ------------------ GERENTE: Painel ------------------
+from django.utils import timezone
+from django.core.paginator import Paginator
+from datetime import datetime
+
 @login_required
 @user_passes_test(is_gerente)
 def painel_gerente(request):
+    # ⏱ Atualiza agendamentos pendentes cujo prazo já passou
+    agora = timezone.now()
+    Agendamento.objects.filter(status='pendente', data_hora__lt=agora).update(status='atrasado')
+
+    # 🔍 Filtros da URL
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
     status = request.GET.get('status')
@@ -204,17 +213,16 @@ def painel_gerente(request):
     if data_inicial:
         try:
             data_inicial = datetime.strptime(data_inicial, '%Y-%m-%d').date()
-            agendamentos = agendamentos.filter(data_hora__gte=data_inicial)
+            agendamentos = agendamentos.filter(data_hora__date__gte=data_inicial)
         except ValueError:
             pass
 
     if data_final:
         try:
             data_final = datetime.strptime(data_final, '%Y-%m-%d').date()
-            agendamentos = agendamentos.filter(data_hora__lte=data_final)
+            agendamentos = agendamentos.filter(data_hora__date__lte=data_final)
         except ValueError:
             pass
-
 
     if status:
         agendamentos = agendamentos.filter(status=status)
@@ -223,6 +231,8 @@ def painel_gerente(request):
         agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
 
     agendamentos = agendamentos.order_by('-data_hora')
+
+    # Paginação
     paginator = Paginator(agendamentos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -232,12 +242,12 @@ def painel_gerente(request):
         'data_inicial': data_inicial,
         'data_final': data_final,
         'mercadoria': mercadoria,
-        'status':status,
-        'status_choices':Agendamento.STATUS_CHOICES,
-        'mercadoria': mercadoria,
+        'status': status,
+        'status_choices': Agendamento.STATUS_CHOICES,
     }
 
     return render(request, 'agendamento/painel_gerente.html', context)
+
 
 # ------------------ GERENTE: Ações ------------------
 @login_required

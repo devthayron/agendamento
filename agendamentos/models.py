@@ -16,7 +16,7 @@ class Agendamento(models.Model):
         ('galpao1', 'galpão1'),
         ('galpao2', 'galpão2'),
         ('galpao3', 'galpão3'),
-        ('galpãa4', 'galpão4'),
+        ('galpao4', 'galpão4'),
     ]
 
     galpao = models.CharField("Galpão", max_length=20,choices=GALPAO_CHOICES,)
@@ -35,6 +35,7 @@ class Agendamento(models.Model):
         ('confirmado', 'Confirmado'),
         ('cancelado', 'Cancelado'),
         ('finalizado', 'Finalizado'),
+        ('atrasado', 'Atrasado'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
 
@@ -61,7 +62,6 @@ class AgendamentoProduto(models.Model):
         on_delete=models.CASCADE,
         related_name='itens'
     )
-    nota_fiscal = models.CharField("Nota fiscal",default=1,max_length=100)
     mercadoria = models.CharField("Produto", max_length=100)
     quantidade = models.FloatField("Quantidade")
     cubagem = models.FloatField("Cubagem")

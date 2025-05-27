@@ -11,6 +11,7 @@
     <thead class="thead-dark">
         <tr>
             <th>Data</th>
+            <th>Agenda</th>
             <th>Galpão</th>
             <th>Fornecedor</th>
             <th>Transportadora</th>
@@ -26,6 +27,7 @@
         {% for ag in page_obj %}
         <tr>
             <td data-label="Data">{{ ag.data_hora|date:"d/m/Y" }}</td>
+            <td data-label="Agenda">{{ ag.id }}</td>
             <td data-label="Galpão">{{ ag.galpao }}</td>
             <td data-label="Fornecedor">{{ ag.fornecedor }}</td>
             <td data-label="Transportadora">{{ ag.transportadora }}</td>

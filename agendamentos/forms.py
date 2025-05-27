@@ -1,6 +1,8 @@
 from django import forms
 from .models import Agendamento
 import datetime
+from .utils.feriados import get_feriado_nome
+import datetime
 
 class AgendamentoForm(forms.ModelForm):
     class Meta:
@@ -33,3 +35,10 @@ class AgendamentoForm(forms.ModelForm):
                 'id': 'id_data_hora'
             }
         )
+
+    def clean_data_hora(self):
+        data = self.cleaned_data['data_hora']
+        nome_feriado = get_feriado_nome(data)
+        if nome_feriado:
+            raise forms.ValidationError(f"Não é possível agendar em feriado: {nome_feriado}.")
+        return data
