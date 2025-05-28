@@ -204,8 +204,8 @@ def painel_gerente(request):
     # Atualiza status para 'atrasado' se:
     # status está 'pendente' e data_hora (data do agendamento) for menor que hoje (já passou)
     Agendamento.objects.filter(
-        status='pendente',
-        data_hora__date__lt=hoje
+        status='confirmado',
+        data_hora__lt=timezone.now()
     ).update(status='atrasado')
 
     # Filtros da URL
@@ -267,6 +267,7 @@ def cancelar_agendamento(request, agendamento_id):
 @user_passes_test(is_gerente)
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    print("Status atual:", agendamento.status)
     if agendamento.status in ['pendente', 'atrasado']:
         agendamento.status = 'confirmado'
         agendamento.save()
