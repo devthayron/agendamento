@@ -106,10 +106,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if ag.status == 'pendente' or ag.status == 'atrasado' %}
+                        {% if ag.status == 'pendente'%}
                             <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-secondary btn-sm mb-1 w-100">Editar</a>
                             <a href="{% url 'confirmar_agendamento' ag.id %}" class="btn btn-success btn-sm w-100">Confirmar</a>
-                        {% elif ag.status == 'confirmado' %}
+                        {% elif ag.status == 'confirmado'  or ag.status == 'atrasado'%}
                             <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-secondary btn-sm mb-1 w-100">Editar</a>
                             <a href="{% url 'finalizar_agendamento' ag.id %}" class="btn btn-primary btn-sm w-100">Finalizar</a>
                         {% else %}

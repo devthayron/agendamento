@@ -268,7 +268,7 @@ def cancelar_agendamento(request, agendamento_id):
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
     print("Status atual:", agendamento.status)
-    if agendamento.status in ['pendente', 'atrasado']:
+    if agendamento.status in ['pendente']:
         agendamento.status = 'confirmado'
         agendamento.save()
     return redirect('painel_gerente')
@@ -278,7 +278,7 @@ def confirmar_agendamento(request, agendamento_id):
 @user_passes_test(is_gerente)
 def finalizar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-    if agendamento.status == 'confirmado':
+    if agendamento.status in ['confirmado','atrasado']:
         agendamento.status = 'finalizado'
         agendamento.save()
     return redirect('painel_gerente')
