@@ -101,10 +101,12 @@
                             <span class="badge bg-danger">Cancelado</span>
                         {% elif ag.status == 'finalizado' %}
                             <span class="badge bg-success">Finalizado</span>
+                        {% elif ag.status == 'atrasado' %}
+                            <span class="badge bg-dark">Atrasado</span>
                         {% endif %}
                     </td>
                     <td>
-                        {% if ag.status == 'pendente' %}
+                        {% if ag.status == 'pendente' or ag.status == 'atrasado' %}
                             <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-secondary btn-sm mb-1 w-100">Editar</a>
                             <a href="{% url 'confirmar_agendamento' ag.id %}" class="btn btn-success btn-sm w-100">Confirmar</a>
                         {% elif ag.status == 'confirmado' %}
@@ -119,7 +121,7 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="12" class="text-center">Nenhum agendamento encontrado.</td>
+                    <td colspan="13" class="text-center">Nenhum agendamento encontrado.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -212,12 +214,10 @@
     }
 </style>
 
-
-
 <script>
     // Ajustar os data-labels para cada <td> via JS para facilitar manutenção
     document.addEventListener('DOMContentLoaded', () => {
-        const labels = ['Data', 'Galpão', 'Fornecedor', 'Transportadora', 'Tipo', 'Pedido', 'NF', 'Cubagem', 'Qtd', 'Produtos', 'Status', 'Ações'];
+        const labels = ['Data', 'Agenda', 'Galpão', 'Fornecedor', 'Transportadora', 'Tipo', 'Pedido', 'NF', 'Cubagem', 'Qtd', 'Produtos', 'Status', 'Ações'];
         document.querySelectorAll('tbody tr').forEach(tr => {
             tr.querySelectorAll('td').forEach((td, idx) => {
                 td.setAttribute('data-label', labels[idx] || '');

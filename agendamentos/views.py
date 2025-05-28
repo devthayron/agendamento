@@ -9,6 +9,8 @@ from xhtml2pdf import pisa
 from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
 from agendamentos.utils.limite_doca import verificar_disponibilidade
+from django.utils import timezone
+from django.utils.timezone import localtime, now
 
 # verifica se o usuário está logado e se é 'gerente'
 def is_gerente(user):
@@ -191,18 +193,22 @@ def agendamento_editar(request, id):
 
 
 # ------------------ GERENTE: Painel ------------------
-from django.utils import timezone
-from django.core.paginator import Paginator
-from datetime import datetime
+
 
 @login_required
 @user_passes_test(is_gerente)
 def painel_gerente(request):
-    # ⏱ Atualiza agendamentos pendentes cujo prazo já passou
     agora = timezone.now()
-    Agendamento.objects.filter(status='pendente', data_hora__lt=agora).update(status='atrasado')
+    hoje = agora.date()
 
-    # 🔍 Filtros da URL
+    # Atualiza status para 'atrasado' se:
+    # status está 'pendente' e data_hora (data do agendamento) for menor que hoje (já passou)
+    Agendamento.objects.filter(
+        status='pendente',
+        data_hora__date__lt=hoje
+    ).update(status='atrasado')
+
+    # Filtros da URL
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
     status = request.GET.get('status')
@@ -248,7 +254,6 @@ def painel_gerente(request):
 
     return render(request, 'agendamento/painel_gerente.html', context)
 
-
 # ------------------ GERENTE: Ações ------------------
 @login_required
 @user_passes_test(is_gerente)
@@ -262,10 +267,11 @@ def cancelar_agendamento(request, agendamento_id):
 @user_passes_test(is_gerente)
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-    if agendamento.status == 'pendente':
+    if agendamento.status in ['pendente', 'atrasado']:
         agendamento.status = 'confirmado'
         agendamento.save()
     return redirect('painel_gerente')
+
 
 @login_required
 @user_passes_test(is_gerente)
