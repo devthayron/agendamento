@@ -261,7 +261,7 @@ def painel_gerente(request):
     galpao = request.GET.get('galpao')
 
     # Agendamentos do gerente
-    agendamentos = Agendamento.objects.filter(usuario=request.user)
+    agendamentos = Agendamento.objects.all()
 
     if data_inicial:
         try:

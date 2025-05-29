@@ -16,12 +16,12 @@ def registrar_usuario(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            usuario = form.save()
-            login(request, usuario)
-            return redirect('agendamento_criar')
+            usuario = form.save()  
+            return redirect('listar_usuarios') 
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registrar.html', {'form': form})
+
 
 
 @login_required
