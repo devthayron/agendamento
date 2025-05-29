@@ -10,7 +10,7 @@ from .forms import AgendamentoForm
 from .models import Agendamento, AgendamentoProduto
 from agendamentos.utils.limite_doca import verificar_disponibilidade
 from django.utils import timezone
-from django.utils.timezone import localtime, now
+from django.db.models import Sum
 
 # verifica se o usuário está logado e se é 'gerente'
 def is_gerente(user):
@@ -42,16 +42,62 @@ def baixar_agendamento_pdf(request, agendamento_id):
 # ------------------ Visualizar Agendamentos ------------------
 
 @login_required
-def painel_users_list(request):
-    # Filtra os agendamentos do usuário logado e ordena por data mais recente
-    agendamentos = Agendamento.objects.filter(usuario=request.user).order_by('-data_hora')
+def painel_user(request):
+    # Filtros da URL
+    data_inicial = request.GET.get('data_inicial')
+    data_final = request.GET.get('data_final')
+    status = request.GET.get('status')
+    mercadoria = request.GET.get('mercadoria')
+    galpao = request.GET.get('galpao')
 
-    # Ajusta o número de agendamentos por página
-    paginator = Paginator(agendamentos, 5)
+    # Apenas agendamentos do usuário logado
+    agendamentos = Agendamento.objects.filter(usuario=request.user)
 
+    data_inicial = request.GET.get('data_inicial')
+    data_final = request.GET.get('data_final')
+
+    if data_inicial:
+        try:
+            data_inicial_date = datetime.strptime(data_inicial, '%Y-%m-%d').date()
+            agendamentos = agendamentos.filter(data_hora__date__gte=data_inicial_date)
+        except ValueError:
+            data_inicial = ''
+
+    if data_final:
+        try:
+            data_final_date = datetime.strptime(data_final, '%Y-%m-%d').date()
+            agendamentos = agendamentos.filter(data_hora__date__lte=data_final_date)
+        except ValueError:
+            data_final = ''
+
+    if status:
+        agendamentos = agendamentos.filter(status=status)
+
+    if mercadoria:
+        agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
+        
+    if galpao:
+        agendamentos = agendamentos.filter(galpao__icontains=galpao)
+
+    agendamentos = agendamentos.order_by('-data_hora')
+
+    # Paginação
+    paginator = Paginator(agendamentos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'agendamento/painel_user.html', {'page_obj': page_obj, 'agendamentos': agendamentos})
+
+    context = {
+        'page_obj': page_obj,
+        'data_inicial': data_inicial,
+        'data_final': data_final,
+        'mercadoria': mercadoria,
+        'status': status,
+        'galpao': galpao,
+        'status_choices': Agendamento.STATUS_CHOICES,
+        'galpao_choices': Agendamento.GALPAO_CHOICES,
+    }
+
+    return render(request, 'agendamento/painel_user.html', context)
 
 
 # ------------------ Criar Agendamento ------------------
@@ -201,34 +247,35 @@ def painel_gerente(request):
     agora = timezone.now()
     hoje = agora.date()
 
-    # Atualiza status para 'atrasado' se:
-    # status está 'pendente' e data_hora (data do agendamento) for menor que hoje (já passou)
+    # Atualiza status para atrasado
     Agendamento.objects.filter(
         status='confirmado',
         data_hora__date__lt=hoje
     ).update(status='atrasado')
 
-    # Filtros da URL
+    # Filtros
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
     status = request.GET.get('status')
     mercadoria = request.GET.get('mercadoria')
+    galpao = request.GET.get('galpao')
 
-    agendamentos = Agendamento.objects.all()
+    # Agendamentos do gerente
+    agendamentos = Agendamento.objects.filter(usuario=request.user)
 
     if data_inicial:
         try:
-            data_inicial = datetime.strptime(data_inicial, '%Y-%m-%d').date()
-            agendamentos = agendamentos.filter(data_hora__date__gte=data_inicial)
+            data_inicial_date = datetime.strptime(data_inicial, '%Y-%m-%d').date()
+            agendamentos = agendamentos.filter(data_hora__date__gte=data_inicial_date)
         except ValueError:
-            pass
+            data_inicial = ''
 
     if data_final:
         try:
-            data_final = datetime.strptime(data_final, '%Y-%m-%d').date()
-            agendamentos = agendamentos.filter(data_hora__date__lte=data_final)
+            data_final_date = datetime.strptime(data_final, '%Y-%m-%d').date()
+            agendamentos = agendamentos.filter(data_hora__date__lte=data_final_date)
         except ValueError:
-            pass
+            data_final = ''
 
     if status:
         agendamentos = agendamentos.filter(status=status)
@@ -236,7 +283,16 @@ def painel_gerente(request):
     if mercadoria:
         agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
 
+    if galpao:
+        agendamentos = agendamentos.filter(galpao__icontains=galpao)
+
+    # Ordenar
     agendamentos = agendamentos.order_by('-data_hora')
+
+    # Soma de quantidade e cubagem dos itens dos agendamentos filtrados
+    itens_filtrados = AgendamentoProduto.objects.filter(agendamento__in=agendamentos)
+    soma_quantidade = itens_filtrados.aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+    soma_cubagem = itens_filtrados.aggregate(Sum('cubagem'))['cubagem__sum'] or 0
 
     # Paginação
     paginator = Paginator(agendamentos, 10)
@@ -249,7 +305,11 @@ def painel_gerente(request):
         'data_final': data_final,
         'mercadoria': mercadoria,
         'status': status,
+        'galpao': galpao,
         'status_choices': Agendamento.STATUS_CHOICES,
+        'galpao_choices': Agendamento.GALPAO_CHOICES,
+        'soma_quantidade': soma_quantidade,
+        'soma_cubagem': soma_cubagem,
     }
 
     return render(request, 'agendamento/painel_gerente.html', context)

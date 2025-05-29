@@ -2,28 +2,66 @@
 {% block title %}Painel Administrativo{% endblock %}
 
 {% block content %}
+<style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 <h2 class="mb-4">Painel Administrativo</h2>
 
 <!-- Filtros -->
 <form method="get" class="row g-3 mb-4">
-    <div class="col-6 col-md-2">
-        <input type="date" name="data_inicial" class="form-control" value="{{ data_inicial|default:"" }}">
+
+    <!-- Data Inicial -->
+   <div class="col-6 col-md-2">
+        <label for="data_inicial" class="form-label">De:</label>
+        <input type="date" id="data_inicial" name="data_inicial" class="form-control"
+            value="{{ data_inicial|default:'' }}">
     </div>
+
+    <!-- Data Final -->
     <div class="col-6 col-md-2">
-        <input type="date" name="data_final" class="form-control" value="{{ data_final|default:"" }}">
+        <label for="data_final" class="form-label">Até:</label>
+        <input type="date" id="data_final" name="data_final" class="form-control"
+            value="{{ data_final|default:'' }}">
     </div>
+
+    <!-- Status -->
     <div class="col-12 col-md-2">
-        <select name="status" class="form-select">
+        <label for="status" class="form-label">Status:</label>
+        <select name="status" id="status" class="form-select">
             <option value="" {% if not status %}selected{% endif %}>Todos os status</option>
             {% for value, label in status_choices %}
                 <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
     </div>
-    <div class="col-12 col-md-1 d-grid">
+
+    <!-- Galpão -->
+    <div class="col-12 col-md-2">
+        <label for="galpao" class="form-label">Galpão:</label>
+        <select name="galpao" id="galpao" class="form-select">
+            <option value="" {% if not galpao %}selected{% endif %}>Todos os galpões</option>
+            {% for value, label in galpao_choices %}
+                <option value="{{ value }}" {% if galpao == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Botão de Filtrar -->
+    <div class="col-6 col-md-1 d-grid align-self-end">
         <button type="submit" class="btn btn-primary w-100">Filtrar</button>
     </div>
+
+    <!-- Botão de Limpar -->
+    <div class="col-6 col-md-1 d-grid align-self-end">
+        <a href="{% url 'painel_gerente' %}" class="btn btn-outline-secondary w-100">Limpar</a>
+    </div>
 </form>
+
+
 
 <!-- Tabela -->
 <div class="table-responsive">
@@ -38,8 +76,8 @@
                 <th>Tipo</th>
                 <th>Pedido</th>
                 <th>NF</th>
-                <th>Cubagem</th>
                 <th>Qtd</th>
+                <th>Cubagem</th>
                 <th>Produtos</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -56,8 +94,8 @@
                     <td>{{ ag.tipo_carro }}</td>
                     <td>{{ ag.pedido }}</td>
                     <td>{{ ag.nota_fiscal }}</td>
-                    <td>{{ ag.cubagem_total|floatformat:"-2" }}m³</td>
                     <td>{{ ag.quantidade_total|floatformat:"-2" }}</td>
+                    <td>{{ ag.cubagem_total|floatformat:"-2" }}m³</td>
                     <td class="text-center">
                         {% if ag.itens.exists %}
                             <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#produtosModal{{ ag.id }}">
@@ -125,6 +163,18 @@
                 </tr>
             {% endfor %}
         </tbody>
+        <tfoot class="table-light">
+            <tr>
+                <td colspan="8" class="text-end fw-bold text-secondary">Totais Gerais:</td>
+                <td class="fw-bold text-success text-center">
+                    {{ soma_quantidade|floatformat:"-2" }}
+                </td>
+                <td class="fw-bold text-success text-center">
+                    {{ soma_cubagem|floatformat:"-2" }} m³
+                </td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 
