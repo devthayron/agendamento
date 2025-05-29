@@ -20,11 +20,11 @@ function adicionarProduto() {
         </div>
 
         <div class="row mt-3">
-            <div class="col-6 d-flex justify-content-start">
-                <button type="button" class="btn btn-danger w-100" onclick="removerProduto(this)">Remover</button>
-            </div>
             <div class="col-6 d-flex justify-content-end">
                 <button type="button" class="btn btn-success w-100" onclick="adicionarProduto()">+ Adicionar</button>
+            </div>
+            <div class="col-6 d-flex justify-content-start">
+                <button type="button" class="btn btn-danger w-100" onclick="removerProduto(this)">Remover</button>
             </div>
         </div>
     `;

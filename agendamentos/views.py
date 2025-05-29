@@ -205,7 +205,7 @@ def painel_gerente(request):
     # status está 'pendente' e data_hora (data do agendamento) for menor que hoje (já passou)
     Agendamento.objects.filter(
         status='confirmado',
-        data_hora__lt=timezone.now()
+        data_hora__date__lt=hoje
     ).update(status='atrasado')
 
     # Filtros da URL
