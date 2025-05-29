@@ -33,7 +33,7 @@ O sistema possui dois níveis de acesso: **usuário comum** e **gerente**, cada 
 ## ⚙️ Tecnologias Utilizadas
 
 - Django (backend e autenticação)
-- Sqlite (banco de dados em produção, configurado via `.env`)
+- Postgresql (banco de dados em produção, configurado via `.env`)
 - Bootstrap 5 (interface e responsividade)
 - Chart.js (visualização gráfica dos dados)
 
