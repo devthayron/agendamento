@@ -82,7 +82,7 @@ def painel_user(request):
     agendamentos = agendamentos.order_by('-data_hora')
 
     # Paginação
-    paginator = Paginator(agendamentos, 10)
+    paginator = Paginator(agendamentos, 7)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -289,15 +289,16 @@ def painel_gerente(request):
     # Ordenar
     agendamentos = agendamentos.order_by('-data_hora')
 
-    # Soma de quantidade e cubagem dos itens dos agendamentos filtrados
-    itens_filtrados = AgendamentoProduto.objects.filter(agendamento__in=agendamentos)
-    soma_quantidade = itens_filtrados.aggregate(Sum('quantidade'))['quantidade__sum'] or 0
-    soma_cubagem = itens_filtrados.aggregate(Sum('cubagem'))['cubagem__sum'] or 0
-
     # Paginação
     paginator = Paginator(agendamentos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # Soma de quantidade e cubagem dos itens dos agendamentos filtrados
+    itens_filtrados = AgendamentoProduto.objects.filter(agendamento__in=page_obj.object_list)
+    soma_quantidade = itens_filtrados.aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+    soma_cubagem = itens_filtrados.aggregate(Sum('cubagem'))['cubagem__sum'] or 0
+
 
     context = {
         'page_obj': page_obj,

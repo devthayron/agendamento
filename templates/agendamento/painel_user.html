@@ -1,20 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
-</style>
+
+
 <h3 class="text-center">Meus Agendamentos</h3>
 
-<div class="text-center mb-4">
-    <a href="{% url 'agendamento_criar' %}" class="btn btn-success">Criar Novo Agendamento</a>
-</div>
-
-<form method="get" class="row g-3 mb-4">
+<form method="get" class="row g-3 mb-3">
     <!-- Data Inicial -->
    <div class="col-6 col-md-2">
         <label for="data_inicial" class="form-label">De:</label>
@@ -156,8 +147,18 @@
         {% endfor %}
     </tbody>
 </table>
+<div class="position-relative mb-4">
+    <!-- Paginação centralizada -->
+    <div class="d-flex justify-content-center">
+        {% include 'paginacao.html' %}
+    </div>
 
-{% include 'paginacao.html' %}
+    <!-- Botão posicionado no canto direito da mesma linha -->
+    <a href="{% url 'agendamento_criar' %}" 
+       class="btn btn-success position-absolute top-0 end-0">
+       + Novo Agendamento
+    </a>
+</div>
 
 <!-- Responsividade Mobile -->
 <style>
