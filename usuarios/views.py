@@ -12,16 +12,18 @@ from django.contrib.auth.models import User
 def is_gerente(user):
     return user.is_authenticated and user.is_gerente
 
+User = get_user_model()
+
 def registrar_usuario(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             usuario = form.save()  
-            return redirect('listar_usuarios') 
+            messages.success(request, f'Usuário {usuario} cadastrado com sucesso.')
+            return redirect('listar_usuarios')    
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registrar.html', {'form': form})
-
 
 
 @login_required
@@ -31,9 +33,9 @@ def desativar_usuario(request, user_id):
     if request.user.id != user.id:
         user.is_active = False
         user.save()
-        messages.success(request, 'Usuário desativado com sucesso.')
+        messages.warning(request, f'Usuário {user} desativado com sucesso.')
     else:
-        messages.warning(request, 'Você não pode desativar seu próprio usuário.')
+        messages.error(request, 'Você não pode desativar seu próprio usuário.')
     return redirect('listar_usuarios')
 
 @login_required
@@ -42,7 +44,7 @@ def reativar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.is_active = True
     user.save()
-    messages.success(request, 'Usuário reativado com sucesso.')
+    messages.success(request, f'Usuário {user} reativado com sucesso.')
     return redirect('listar_usuarios')
 
 def login_usuario(request):
@@ -50,6 +52,7 @@ def login_usuario(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             usuario = form.get_user()
+            
             login(request, usuario)
             return redirect('agendamento_criar')
     else:
@@ -60,7 +63,6 @@ def logout_usuario(request):
     logout(request)
     return redirect('login')
 
-User = get_user_model()
 
 @login_required
 @user_passes_test(lambda u: u.is_gerente)
@@ -83,15 +85,20 @@ def listar_usuarios(request):
 @login_required
 @user_passes_test(lambda u: u.is_gerente)
 def excluir_usuario(request, usuario_id):
-    if request.user.id != usuario_id:  # impede deletar a si mesmo
-        usuario = User.objects.get(id=usuario_id)
-        usuario.delete()
-    return redirect('listar_usuarios')
+    usuario = User.objects.get(id=usuario_id)
+    if request.method == 'POST':
+        if request.user.id != usuario_id:  # impede deletar a si mesmo
+            usuario.delete()
+            messages.error(request, 'Usuário excluido com sucesso.')
+            return redirect('listar_usuarios')
+
+    return render(request, 'usuarios/confirm_delete.html', {'usuario': usuario})
+
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        senha = request.POST['senha']
+        username = request.POST.get('username')
+        senha = request.POST.get('password')
         user = authenticate(request, username=username, password=senha)
         if user is not None:
             login(request, user)

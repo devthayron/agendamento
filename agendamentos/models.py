@@ -10,7 +10,7 @@ class Agendamento(models.Model):
     email = models.EmailField(max_length=500)
     transportadora = models.CharField(max_length=100)
     nota_fiscal = models.CharField(max_length=100)
-    pedido = models.CharField(max_length=100)
+    pedido = models.CharField(max_length=100,null=True,blank=True)
 
     GALPAO_CHOICES = [
         ('galpao1', 'galpão1'),
@@ -19,7 +19,7 @@ class Agendamento(models.Model):
         ('galpao4', 'galpão4'),
     ]
 
-    galpao = models.CharField("Galpão", max_length=20,choices=GALPAO_CHOICES,)
+    galpao = models.CharField("Galpão", max_length=20,choices=GALPAO_CHOICES,null=True,blank=True)
 
     TIPO_CARRO_CHOICES = [
         ('vuc', 'VUC'),

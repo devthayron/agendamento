@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Exclusão - {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-danger shadow-sm" role="alert">
+        <h4 class="alert-heading">⚠️ Atenção!</h4>
+        <h5>Tem certeza que deseja excluir o usuario <strong>{{ usuario.username }}</strong>?</h5>
+        <p>Esta ação também excluirá todos os agendamentos relacionados a ele.</p>
+        <div class="d-flex gap-2">
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">
+                    <i class="bi bi-trash-fill"></i> Excluir
+                </button>
+            </form>
+                <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-secondary btn-sm">
+                    Cancelar
+                </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

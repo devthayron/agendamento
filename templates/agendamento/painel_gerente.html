@@ -62,8 +62,8 @@
     <table class="table table-bordered table-hover align-middle mb-4">
         <thead class="table-dark">
             <tr>
-                <th>Data</th>
                 <th>Agenda</th>
+                <th>Data</th>
                 <th>Galpão</th>
                 <th>Fornecedor</th>
                 <th>Transportadora</th>
@@ -80,8 +80,8 @@
         <tbody>
             {% for ag in page_obj %}
                 <tr>
-                    <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
                     <td>{{ ag.id }}</td>
+                    <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
                     <td>{{ ag.galpao }}</td>
                     <td>{{ ag.fornecedor }}</td>
                     <td>{{ ag.transportadora }}</td>

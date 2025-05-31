@@ -48,7 +48,6 @@ def painel_user(request):
     data_final = request.GET.get('data_final')
     status = request.GET.get('status')
     mercadoria = request.GET.get('mercadoria')
-    galpao = request.GET.get('galpao')
 
     # Apenas agendamentos do usuário logado
     agendamentos = Agendamento.objects.filter(usuario=request.user)
@@ -74,12 +73,9 @@ def painel_user(request):
         agendamentos = agendamentos.filter(status=status)
 
     if mercadoria:
-        agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
-        
-    if galpao:
-        agendamentos = agendamentos.filter(galpao__icontains=galpao)
+        agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()   
 
-    agendamentos = agendamentos.order_by('-data_hora')
+    agendamentos = agendamentos.order_by('-id')
 
     # Paginação
     paginator = Paginator(agendamentos, 7)
@@ -92,9 +88,7 @@ def painel_user(request):
         'data_final': data_final,
         'mercadoria': mercadoria,
         'status': status,
-        'galpao': galpao,
         'status_choices': Agendamento.STATUS_CHOICES,
-        'galpao_choices': Agendamento.GALPAO_CHOICES,
     }
 
     return render(request, 'agendamento/painel_user.html', context)
@@ -287,7 +281,7 @@ def painel_gerente(request):
         agendamentos = agendamentos.filter(galpao__icontains=galpao)
 
     # Ordenar
-    agendamentos = agendamentos.order_by('-data_hora')
+    agendamentos = agendamentos.order_by('-id')
 
     # Paginação
     paginator = Paginator(agendamentos, 10)

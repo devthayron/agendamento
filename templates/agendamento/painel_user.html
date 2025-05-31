@@ -32,17 +32,6 @@
         </select>
     </div>
 
-    <!-- Galpão -->
-    <div class="col-12 col-md-2">
-        <label for="galpao" class="form-label">Galpão:</label>
-        <select name="galpao" id="galpao" class="form-select">
-            <option value="" {% if not galpao %}selected{% endif %}>Todos os galpões</option>
-            {% for value, label in galpao_choices %}
-                <option value="{{ value }}" {% if galpao == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
     <!-- Botão de Filtrar -->
     <div class="col-6 col-md-1 d-grid align-self-end">
         <button type="submit" class="btn btn-primary w-100">Filtrar</button>
@@ -59,9 +48,8 @@
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>Data</th>
             <th>Agenda</th>
-            <th>Galpão</th>
+            <th>Data</th>
             <th>Fornecedor</th>
             <th>Transportadora</th>
             <th>Tipo de Carga</th>
@@ -75,9 +63,8 @@
     <tbody>
         {% for ag in page_obj %}
         <tr>
-            <td data-label="Data">{{ ag.data_hora|date:"d/m/Y" }}</td>
             <td data-label="Agenda">{{ ag.id }}</td>
-            <td data-label="Galpão">{{ ag.galpao }}</td>
+            <td data-label="Data">{{ ag.data_hora|date:"d/m/Y" }}</td>
             <td data-label="Fornecedor">{{ ag.fornecedor }}</td>
             <td data-label="Transportadora">{{ ag.transportadora }}</td>
             <td data-label="Tipo de Carga">{{ ag.tipo_carro }}</td>
@@ -132,9 +119,9 @@
             </td>
             <td data-label="Ação">
                 {% if ag.status == 'pendente' %}
-                <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                <a href="{% url 'agendamento_editar' ag.pk %}" class="btn btn-primary btn-sm w-100">Editar</a>
                 {% else %}
-                <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm" target="_blank">
+                <a href="{% url 'baixar_agendamento_pdf' ag.id %}" class="btn btn-outline-dark btn-sm w-100" target="_blank">
                     <i class="bi bi-file-earmark-pdf"></i> PDF
                 </a>
                 {% endif %}

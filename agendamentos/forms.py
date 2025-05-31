@@ -36,6 +36,10 @@ class AgendamentoForm(forms.ModelForm):
             }
         )
 
+        # impede os campos selecionados de serem obrigatorios    
+        self.fields['galpao'].required = False
+        self.fields['pedido'].required = False
+
     def clean_data_hora(self):
         data = self.cleaned_data['data_hora']
         nome_feriado = get_feriado_nome(data)

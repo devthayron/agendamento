@@ -34,8 +34,20 @@
     {% endif %}
 
     <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
+    {% csrf_token %}
+
+    {% if user.is_gerente %}
+        {{ form.galpao|as_crispy_field }}
+    {% endif %}
+
+    {{ form.cnpj|as_crispy_field }}
+    {{ form.fornecedor|as_crispy_field }}
+    {{ form.email|as_crispy_field }}
+    {{ form.transportadora|as_crispy_field }}
+    {{ form.tipo_carro|as_crispy_field }}
+    {{ form.pedido|as_crispy_field }}
+    {{ form.nota_fiscal|as_crispy_field }}
+    {{ form.data_hora|as_crispy_field }}
 
         <hr>
         <h4 class="mb-3">Produtos</h4>

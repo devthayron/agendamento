@@ -41,9 +41,17 @@
                 <label for="id_id" class="form-label">ID</label>
                 <input type="text" id="id_id" class="form-control" value="{{ agendamento.id }}" readonly>
             </div>
+            {{ form.galpao|as_crispy_field }}
         {% endif %}
 
-        {{ form.as_p }}
+        {{ form.cnpj|as_crispy_field }}
+        {{ form.fornecedor|as_crispy_field }}
+        {{ form.email|as_crispy_field }}
+        {{ form.transportadora|as_crispy_field }}
+        {{ form.tipo_carro|as_crispy_field }}
+        {{ form.pedido|as_crispy_field }}
+        {{ form.nota_fiscal|as_crispy_field }}
+        {{ form.data_hora|as_crispy_field }}
 
         <hr>
         <h4 class="mb-3">Produtos</h4>
@@ -81,7 +89,7 @@
         {% if user.is_gerente %}
         <div class="d-flex justify-content-between mb-4 gap-3 flex-wrap">
             <button class="btn btn-primary btn-lg flex-grow-1" type="submit">Salvar Alterações</button>
-            <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-lg flex-grow-1">Cancelar</a>
+            <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-lg flex-grow-1">Cancelar o agendamento</a>
         </div>
         {% else %}
         <div class="d-grid mb-4">

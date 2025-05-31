@@ -22,14 +22,15 @@
             </div>
             
             <div class="mb-3">
-                <label for="senha" class="form-label">Senha:</label>
+                <label for="password" class="form-label">Senha:</label>
                 <input type="password" id="password" name="password" class="form-control" required placeholder="Digite sua senha">
             </div>
 
             {% if erro %}
-                <div class="alert alert-danger" role="alert">
-                    {{ erro }}
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ erro }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
             {% endif %}
 
             <div class="d-grid">
