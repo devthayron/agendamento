@@ -29,7 +29,7 @@ class AgendamentoForm(forms.ModelForm):
         hoje = datetime.date.today().isoformat()
         self.fields['data_hora'].widget = forms.DateInput(
             attrs={
-                'type': 'date',
+                'type': 'date',git commit -m 'adicionando mensagens ao excluir..., tirando filtro do painel user, e deixando galpae pedido sem ser obrigatorio.'
                 'class': 'form-control',
                 'min': hoje,  # Impede seleção de datas anteriores
                 'id': 'id_data_hora'
