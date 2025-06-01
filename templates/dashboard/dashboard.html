@@ -3,136 +3,117 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h2>Dashboard do Gerente</h2>
+<h2 class="mb-4">Dashboard do Gerente</h2>
 
-<!-- Filtro por datas -->
-<form method="get" class="row g-3 mt-3 mb-4">
-    <div class="col-auto">
-        <label for="data_inicio" class="form-label">De:</label>
-        <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}" class="form-control">
-    </div>
-    <div class="col-auto">
-        <label for="data_fim" class="form-label">Até:</label>
-        <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}" class="form-control">
-    </div>
-    <div class="col-auto align-self-end">
-        <button type="submit" class="btn btn-secondary">Filtrar</button>
-        <a href="{% url 'exportar_agendamentos_csv' %}?data_inicial={{ data_inicial }}&data_final={{ data_final }}" class="btn btn-outline-primary">Exportar CSV</a>
-        <a href="{% url 'painel_dashboard' %}" class="btn btn-secondary">Limpar</a>
-    </div>
+<form method="get" class="row g-3 mb-4">
+  <div class="col-6 col-md-2">
+    <label for="data_inicio" class="form-label">De:</label>
+    <input type="date" id="data_inicio" name="data_inicio" class="form-control" value="{{ data_inicio }}">
+  </div>
+  <div class="col-6 col-md-2">
+    <label for="data_fim" class="form-label">Até:</label>
+    <input type="date" id="data_fim" name="data_fim" class="form-control" value="{{ data_fim }}">
+  </div>
+  <div class="col-auto align-self-end">
+    <button type="submit" class="btn btn-secondary">Filtrar</button>
+    <a href="{% url 'exportar_agendamentos_csv' %}?data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="btn btn-outline-primary">Exportar CSV</a>
+    <a href="{% url 'painel_dashboard' %}" class="btn btn-secondary">Limpar</a>
+  </div>
 </form>
 
-<!-- Cards de estatísticas -->
-<div class="row">
-    <div class="col-md-3">
-        <div class="card text-bg-primary mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Total de Agendamentos</h5>
-                <p class="card-text">{{ total }}</p>
-            </div>
-        </div>
+<!-- Cards de Status -->
+<div class="row mb-4">
+  {% for nome, cor, valor in status_cards %}
+  <div class="col-6 col-md-2">
+    <div class="card text-bg-{{ cor }} shadow-sm h-100">
+      <div class="card-body text-center py-3">
+        <h6 class="card-title mb-1 text-white">{{ nome }}</h6>
+        <p class="display-6 mb-0 text-white">{{ valor|default:"0" }}</p>
+      </div>
     </div>
-
-    <div class="col-md-3">
-        <div class="card text-bg-warning mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Pendentes</h5>
-                <p class="card-text">{{ pendentes }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card text-bg-success mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Confirmados</h5>
-                <p class="card-text">{{ confirmados }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card text-bg-danger mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Cancelados</h5>
-                <p class="card-text">{{ cancelados }}</p>
-            </div>
-        </div>
-    </div>
+  </div>
+  {% endfor %}
 </div>
 
-<!-- Agendamentos de Hoje -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card text-bg-info mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Agendamentos Hoje</h5>
-                <p class="card-text">{{ agendamentos_hoje }}</p>
-            </div>
-        </div>
+<!-- Gráfico Pizza -->
+<div class="card shadow-sm mb-4 bg-white">
+  <div class="card-body">
+    <h5 class="card-title mb-3 text-center">Distribuição dos Agendamentos por Status</h5>
+    <div class="d-flex justify-content-center" style="height: 450px;">
+      <canvas id="graficoStatus" style="max-height: 450px; height: 100%; max-width: 100%; background-color: white;"></canvas>
     </div>
+  </div>
 </div>
 
-<!-- Gráfico + Finalizados -->
-<div class="row mt-5">
-    <div class="col-md-6">
-        <div class="card text-bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Distribuição de Agendamentos</h5>
-                <canvas id="graficoStatus" width="400" height="400"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card text-bg-info mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Finalizados</h5>
-                <p class="card-text">{{ finalizados }}</p>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Scripts Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <script>
-    const ctx = document.getElementById('graficoStatus').getContext('2d');
-    const graficoStatus = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Pendentes', 'Confirmados', 'Cancelados', 'Finalizados'],
-            datasets: [{
-                label: 'Status dos Agendamentos',
-                data: [
-                    {{ pendentes|default:0|safe }},
-                    {{ confirmados|default:0|safe }},
-                    {{ cancelados|default:0|safe }},
-                    {{ finalizados|default:0|safe }}
-                ],
-                backgroundColor: [
-                    'rgba(255, 193, 7, 0.7)',
-                    'rgba(40, 167, 69, 0.7)',
-                    'rgba(220, 53, 69, 0.7)',
-                    'rgba(0, 123, 255, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(255, 193, 7, 1)',
-                    'rgba(40, 167, 69, 1)',
-                    'rgba(220, 53, 69, 1)',
-                    'rgba(0, 123, 255, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-            }
+const statusData = {
+  labels: [],
+  values: [],
+  cores: [],
+};
+
+const statusMap = {
+  "Pendentes": { valor: {{ status_cards.1.2|default:"0" }}, cor: 'rgba(255, 193, 7, 0.8)' },       
+  "Confirmados": { valor: {{ status_cards.2.2|default:"0" }}, cor: 'rgba(25, 135, 84, 0.8)' },     
+  "Cancelados": { valor: {{ status_cards.3.2|default:"0" }}, cor: 'rgba(220, 53, 69, 0.8)' },     
+  "Finalizados": { valor: {{ status_cards.4.2|default:"0" }}, cor: 'rgba(13, 110, 253, 0.8)' },    
+  "Atrasados": { valor: {{ status_cards.5.2|default:"0" }}, cor: 'rgba(33, 37, 41, 0.8)' }          
+};
+
+
+
+for (const [nome, obj] of Object.entries(statusMap)) {
+  if (obj.valor > 0) {
+    statusData.labels.push(nome);
+    statusData.values.push(obj.valor);
+    statusData.cores.push(obj.cor);
+  }
+}
+
+new Chart(document.getElementById('graficoStatus'), {
+  type: 'pie',
+  data: {
+    labels: statusData.labels,
+    datasets: [{
+      data: statusData.values,
+      backgroundColor: statusData.cores,
+      borderColor: '#fff',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'right',
+        align: 'start',
+        labels: {
+          color: '#000', // texto preto para fundo branco
+          font: { size: 13 }
         }
-    });
+      },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${value}`;
+          }
+        }
+      },
+      datalabels: {
+        color: '#fff',
+        font: { weight: 'bold', size: 13 },
+        formatter: val => val
+      }
+    }
+  },
+  plugins: [ChartDataLabels]
+});
 </script>
-
-
 {% endblock %}

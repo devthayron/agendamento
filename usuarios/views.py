@@ -77,6 +77,7 @@ def listar_usuarios(request):
     else:
         form = RegistroUsuarioForm()
 
+    usuarios = usuarios.order_by('-is_gerente')
     return render(request, 'usuarios/gerenciar_usuarios.html', {
         'form': form,
         'usuarios': usuarios
