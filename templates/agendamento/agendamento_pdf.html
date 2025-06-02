@@ -13,6 +13,11 @@
     <h1 style="font-size: 30px">Agendamento N°: {{ agendamento.id }}</h1>
     <div class="dados">
         <p style="font-size: 25px; text-decoration: underline"><strong>Data:</strong> {{ agendamento.data_hora|date:"d/m/Y" }}</p>
+
+        {% if agendamento.galpao %}
+            <p><strong>Galpão:</strong> {{ agendamento.galpao }}</p>
+        {% endif %}
+
         <p><strong>Fornecedor:</strong> {{ agendamento.fornecedor }}</p>
         <p><strong>Transportadora:</strong> {{ agendamento.transportadora }}</p>
         <p><strong>Pedido:</strong> {{ agendamento.pedido }}</p>

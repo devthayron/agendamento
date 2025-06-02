@@ -74,11 +74,6 @@
                             <i class="bi bi-calendar-plus me-1"></i> Agendar Carro
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'painel_user' %}">
-                            <i class="bi bi-gear-fill me-1"></i> Meus Agendamentos
-                        </a>
-                    </li>
                     {% if user.is_gerente %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'painel_dashboard' %}">
@@ -95,12 +90,19 @@
                                 <i class="bi bi-people-fill me-1"></i> Usuários
                             </a>
                         </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'painel_user' %}">
+                            <i class="bi bi-gear-fill me-1"></i> Meus Agendamentos
+                        </a>
+                    </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="{% url 'logout' %}">
                             <i class="bi bi-box-arrow-right me-1"></i> Sair
                         </a>
                     </li>
+                    
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">
