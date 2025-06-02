@@ -20,24 +20,28 @@ def is_gerente(user):
 # ------------------  PDF  ------------------
 @login_required
 def baixar_agendamento_pdf(request, agendamento_id):
-    # busca o agendamento pelo ID e verifica se é do usuário.
-    agendamento = get_object_or_404(Agendamento, id=agendamento_id, usuario=request.user)
+    if request.user.is_gerente:
+        #
+        agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    else:
+        # Usuário comum busca só agendamento dele
+        agendamento = get_object_or_404(Agendamento, id=agendamento_id, usuario=request.user)
 
-    # Renderiza o HTML para a página
+
     html_string = render_to_string('agendamento/agendamento_pdf.html', {'agendamento': agendamento})
 
-    # Cria a resposta PDF
+  
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename=agendamento_{agendamento.id}.pdf'
 
-    # Converte o HTML para PDF usando xhtml2pdf
+
     pisa_status = pisa.CreatePDF(html_string, dest=response)
 
-    # Se ocorrer algum erro na conversão, retornamos uma resposta de erro
     if pisa_status.err:
         return HttpResponse('Erro ao gerar PDF', status=500)
 
     return response
+
 
 # ------------------ Visualizar Agendamentos ------------------
 
