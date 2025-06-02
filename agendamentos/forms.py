@@ -9,7 +9,7 @@ class AgendamentoForm(forms.ModelForm):
         model = Agendamento
         fields = [
             'galpao','cnpj', 'fornecedor', 'email', 'transportadora', 'tipo_carro', 
-            'pedido', 'nota_fiscal', 'data_hora',
+            'pedido', 'nota_fiscal', 'data_hora','sem_limite_doca',
         ]
         widgets = {
             'data_hora': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -22,6 +22,8 @@ class AgendamentoForm(forms.ModelForm):
             'nota_fiscal': forms.TextInput(attrs={'class': 'form-control'}),  
             'produto': forms.TextInput(attrs={'class': 'form-control'}),  
             'galpao': forms.Select(attrs={'class': 'form-control'}),  
+            'sem_limite_doca': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
         }
 
     def __init__(self, *args, **kwargs):

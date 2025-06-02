@@ -8,11 +8,11 @@ LIMITES_DOCAS = {
     'galpao4': 2,
 }
 
-def verificar_disponibilidade(galpao, data_agendamento, agendamento_id=None):
-    if not galpao:  
+def verificar_disponibilidade(galpao, data_agendamento, agendamento_id=None, sem_limite_doca=False):
+    if not galpao or sem_limite_doca:
         return True, None
-    limite = LIMITES_DOCAS.get(galpao, 0)
 
+    limite = LIMITES_DOCAS.get(galpao, 0)
     agendamentos_do_dia = Agendamento.objects.filter(
         galpao=galpao,
         data_hora__date=data_agendamento

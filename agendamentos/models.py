@@ -11,6 +11,7 @@ class Agendamento(models.Model):
     transportadora = models.CharField(max_length=100)
     nota_fiscal = models.CharField(max_length=100)
     pedido = models.CharField(max_length=100,null=True,blank=True)
+    sem_limite_doca = models.BooleanField(default=False, verbose_name="Exceção ao limite de doca")
 
     GALPAO_CHOICES = [
         ('galpao1', 'galpão1'),

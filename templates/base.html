@@ -74,6 +74,11 @@
                             <i class="bi bi-calendar-plus me-1"></i> Agendar Carro
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'painel_user' %}">
+                            <i class="bi bi-gear-fill me-1"></i> Meus Agendamentos
+                        </a>
+                    </li>
                     {% if user.is_gerente %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'painel_dashboard' %}">

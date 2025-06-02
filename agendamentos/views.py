@@ -94,20 +94,29 @@ def painel_user(request):
     return render(request, 'agendamento/painel_user.html', context)
 
 
-# ------------------ Criar Agendamento ------------------
 @login_required
 def agendamento_criar(request):
     mensagem_erro = None
     sugestoes = None
 
     if request.method == 'POST':
-        form = AgendamentoForm(request.POST)
+        post_data = request.POST.copy()
+
+        # Trata a opção "Sem galpão" como None
+        if post_data.get('galpao') == '__none__':
+            post_data['galpao'] = None
+
+        form = AgendamentoForm(post_data)
+
         if form.is_valid():
             galpao = form.cleaned_data['galpao']
             data_hora = form.cleaned_data['data_hora']
+            sem_limite_doca = form.cleaned_data.get('sem_limite_doca', False)
 
-            # Verificação de disponibilidade antes de salvar
-            disponivel, resultado = verificar_disponibilidade(galpao, data_hora.date())
+            # Verifica se há disponibilidade
+            disponivel, resultado = verificar_disponibilidade(
+                galpao, data_hora.date(), sem_limite_doca=sem_limite_doca
+            )
 
             if not disponivel:
                 mensagem_erro = resultado['mensagem']
@@ -120,6 +129,7 @@ def agendamento_criar(request):
                 agendamento.usuario = request.user
                 agendamento.save()
 
+                # Processa os produtos
                 produtos = []
                 i = 0
                 while True:
@@ -172,9 +182,15 @@ def agendamento_editar(request, id):
         if form.is_valid():
             galpao = form.cleaned_data['galpao']
             data_hora = form.cleaned_data['data_hora']
+            sem_limite_doca = form.cleaned_data.get('sem_limite_doca', False)  
 
             # Verificação de disponibilidade antes de salvar
-            disponivel, resultado = verificar_disponibilidade(galpao, data_hora.date(), agendamento_id=agendamento.id)
+            disponivel, resultado = verificar_disponibilidade(
+                galpao,
+                data_hora.date(),
+                agendamento_id=agendamento.id,
+                sem_limite_doca=sem_limite_doca  
+            )
 
             if not disponivel:
                 mensagem_erro = resultado['mensagem']
@@ -232,6 +248,7 @@ def agendamento_editar(request, id):
 
 
 
+
 # ------------------ GERENTE: Painel ------------------
 
 
@@ -277,8 +294,10 @@ def painel_gerente(request):
     if mercadoria:
         agendamentos = agendamentos.filter(itens__mercadoria__icontains=mercadoria).distinct()
 
-    if galpao:
-        agendamentos = agendamentos.filter(galpao__icontains=galpao)
+    if galpao == '__none__':
+        agendamentos = agendamentos.filter(galpao__isnull=True)
+    elif galpao:
+        agendamentos = agendamentos.filter(galpao=galpao)
 
     # Ordenar
     agendamentos = agendamentos.order_by('-id')

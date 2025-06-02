@@ -38,6 +38,8 @@
 
     {% if user.is_gerente %}
         {{ form.galpao|as_crispy_field }}
+        {{ form.sem_limite_doca|as_crispy_field }}
+
     {% endif %}
 
     {{ form.cnpj|as_crispy_field }}
@@ -85,9 +87,9 @@
             <button class="btn btn-primary btn-lg" type="submit">Fazer Agendamento</button>
 
             {% if user.is_gerente %}
-                <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info btn-lg">Ver Todos os Agendamentos</a>
+                <a href="{% url 'painel_gerente' %}" class="btn btn-outline-info btn-lg">Painel do Gerente</a>
             {% else %}
-                <a href="{% url 'painel_user' %}" class="btn btn-outline-info btn-lg">Ver Meus Agendamentos</a>
+                <a href="{% url 'painel_user' %}" class="btn btn-outline-info btn-lg">Meus Agendamentos</a>
             {% endif %}
         </div>
     </form>

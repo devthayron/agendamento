@@ -34,15 +34,17 @@
     </div>
 
     <!-- Galpão -->
-    <div class="col-12 col-md-2">
+   <div class="col-12 col-md-2">
         <label for="galpao" class="form-label">Galpão:</label>
         <select name="galpao" id="galpao" class="form-select">
             <option value="" {% if not galpao %}selected{% endif %}>Todos os galpões</option>
+            <option value="__none__" {% if galpao == '__none__' %}selected{% endif %}>Sem galpão</option>
             {% for value, label in galpao_choices %}
                 <option value="{{ value }}" {% if galpao == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
     </div>
+
 
     <!-- Botão de Filtrar -->
     <div class="col-6 col-md-1 d-grid align-self-end">
@@ -82,7 +84,13 @@
                 <tr>
                     <td>{{ ag.id }}</td>
                     <td>{{ ag.data_hora|date:"d/m/Y" }}</td>
-                    <td>{{ ag.galpao }}</td>
+                    <td>
+                        {% if ag.galpao %}
+                            {{ ag.galpao }}
+                        {% else %}
+                            <span class="text-muted">Sem galpão</span>
+                        {% endif %}
+                    </td>
                     <td>{{ ag.fornecedor }}</td>
                     <td>{{ ag.transportadora }}</td>
                     <td>{{ ag.tipo_carro }}</td>
